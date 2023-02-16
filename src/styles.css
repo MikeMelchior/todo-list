@@ -1,0 +1,102 @@
+@font-face {
+    font-family: Dekko;
+    src: url(./Dekko-Regular.ttf);
+}
+
+:root {
+    --gamboge: #EC9A29;
+    --blackOlive: #3B413C;
+    --ashGray: #9DB5B2;
+    --lightCyan: #DAF0EE;
+    --tiffanyBlue: #94D1BE;
+}
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body, 
+html {
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    align-items: stretch;
+    background-color: var(--tiffanyBlue);
+}
+
+.main {
+    width: 100%;
+    display: grid;
+    grid: auto 1fr auto / auto 1fr;
+}
+
+header {
+    grid-area: 1 / 1 / 2 / 3;
+    background-color: var(--lightCyan);
+    font-family: Dekko;
+    display: flex;
+    align-items: center;
+    gap: 55px;
+    padding-left: 2rem;
+}
+
+#menu-button {
+    height: 40px;
+    cursor: pointer;
+    padding: 8px;
+    background-color: white;
+}
+
+
+
+
+
+h1 {
+    font-size: 40px;
+    letter-spacing: 2.5px;
+}
+
+
+
+.content {
+    grid-area: 2/2/3/3;
+    background-color: var(--lightCyan);
+    display: flex;
+}
+
+    .sidebar {
+        background-color: var(--ashGray);    
+        height: 100%;
+        min-width: fit-content;
+        width: 400px;
+        padding: 2rem;
+        display: grid;
+    }
+
+    .page {
+        background-color: var(--tiffanyBlue);
+        flex: auto;
+    }
+
+
+footer {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding: 5px;
+    font-family: Dekko;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+a:hover {
+    color: white;
+}
+

@@ -39,7 +39,6 @@ const storeItem = (item) => {
     // logic to store item from html 
     // form goes somewhere here 
     }
-    
 };
 
 const removeItem = (item) => {
@@ -58,9 +57,5 @@ const itemInStorage = (storage, todo) => {
     }
     console.log('this item doesn\'t exist'); return false;
 }
-
-removeItem(today)
-logStorage()
-
 
 
