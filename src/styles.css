@@ -74,7 +74,17 @@ h1 {
         width: 400px;
         padding: 2rem;
         display: grid;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.75s, width 0.75s, visibility 0.75s;
     }
+
+        .sidebar.closed {
+            opacity: 0;
+            visibility: hidden;
+            width: 0px;
+            padding: 0;
+        }
 
     .page {
         background-color: var(--tiffanyBlue);

@@ -86,5 +86,6 @@ try {
 
 document.querySelector('#menu-button').addEventListener('click', () => {
     let sideBar = document.querySelector('.sidebar');
-    sideBar.style.display != 'none' ? sideBar.style.display = 'none' : sideBar.style.display = 'grid'
+    sideBar.classList.toggle('closed');
+    // sideBar.style.display != 'none' ? sideBar.style.display = 'none' : sideBar.style.display = 'grid'
 })
