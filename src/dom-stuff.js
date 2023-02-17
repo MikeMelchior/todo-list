@@ -7,6 +7,24 @@ const createClassedElement = (element, className) => {
     return component;
 }
 
+const menuHider = (x) => {
+    let menu = document.querySelector('div.sidebar')
+    if (x.matches) {
+        menu.classList.add('closed');
+    } else {
+        menu.classList.remove('closed');
+    }
+}
+
+const fullscreenMenu = (x) => {
+    let menu = document.querySelector('div.sidebar');
+    if(x.matches) {
+        menu.classList.add('full-size')
+    } else {
+        menu.classList.remove('full-size')
+    }
+}
+
 const mainDiv = createClassedElement('div', 'main');
 
 document.body.appendChild(mainDiv);
@@ -17,7 +35,6 @@ const header = () => {
             menuButton.src = Icon;
             menuButton.id = 'menu-button';
         const h1 = createClassedElement('h1')
-            h1.textContent = 'TO DO LIST'
 
     element.append(menuButton, h1)
     return element;
@@ -62,7 +79,9 @@ const content = () => {
 
     const page = () => {
         const element = createClassedElement('div', 'page');
+            const testElement = createClassedElement('div', 'test');
 
+            element.append(testElement);
         return element;
     }
 
@@ -89,3 +108,12 @@ document.querySelector('#menu-button').addEventListener('click', () => {
     sideBar.classList.toggle('closed');
     // sideBar.style.display != 'none' ? sideBar.style.display = 'none' : sideBar.style.display = 'grid'
 })
+
+
+let hideMenu = window.matchMedia("(max-width: 400px)")
+menuHider(hideMenu)
+hideMenu.addEventListener('change', menuHider);
+
+let sizeMenu = window.matchMedia("(max-width: 675px)");
+sizeMenu.addEventListener('change', fullscreenMenu)
+

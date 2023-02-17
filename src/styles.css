@@ -9,6 +9,13 @@
     --ashGray: #9DB5B2;
     --lightCyan: #DAF0EE;
     --tiffanyBlue: #94D1BE;
+    --buff: #EDB88B;
+    --taupe: #857C8D;
+    --pine: #136F63;
+    --apricot: #FFC9B5;
+    --black: #050505;
+    --lightGray: #CCCCCC;
+    --white: #F5F5F5;
 }
 
 * {
@@ -24,7 +31,6 @@ html {
 body {
     display: flex;
     align-items: stretch;
-    background-color: var(--tiffanyBlue);
 }
 
 .main {
@@ -35,42 +41,37 @@ body {
 
 header {
     grid-area: 1 / 1 / 2 / 3;
-    background-color: var(--lightCyan);
     font-family: Dekko;
     display: flex;
     align-items: center;
     gap: 55px;
-    padding-left: 2rem;
+    padding: 1rem 0rem 1rem 2rem;
+    border-bottom: 1px solid var(--lightGray);
 }
 
 #menu-button {
     height: 40px;
     cursor: pointer;
     padding: 8px;
-    background-color: white;
+    background-color: var(--white);
+    border-radius: 3px;
 }
-
-
-
-
-
-h1 {
-    font-size: 40px;
-    letter-spacing: 2.5px;
-}
-
+    #menu-button:hover {
+        background-color: var(--tiffanyBlue);
+    }
 
 
 .content {
     grid-area: 2/2/3/3;
     background-color: var(--lightCyan);
     display: flex;
+    flex-wrap: wrap;
 }
 
     .sidebar {
-        background-color: var(--ashGray);    
+        background-color: var(--tiffanyBlue);    
+        border-right: 1px solid var(--lightGray);
         height: 100%;
-        min-width: fit-content;
         width: 400px;
         padding: 2rem;
         display: grid;
@@ -78,16 +79,18 @@ h1 {
         visibility: visible;
         transition: opacity 0.75s, width 0.75s, visibility 0.75s;
     }
-
         .sidebar.closed {
             opacity: 0;
             visibility: hidden;
             width: 0px;
             padding: 0;
         }
-
+        .full-size {
+            width: 100vw;
+        }
+        
     .page {
-        background-color: var(--tiffanyBlue);
+        background-color: var(--lightCyan);
         flex: auto;
     }
 
@@ -104,9 +107,14 @@ footer {
 
 a {
     text-decoration: none;
-    color: black;
+    color: var(--black);
 }
 a:hover {
-    color: white;
+    color: var(--blackOlive);
 }
 
+/* .test {
+    width: 300px;
+    height: 300px;
+    background-color: #EC9A29;
+} */
