@@ -1,22 +1,8 @@
-const storageAvailable = () => {
-    let storage = localStorage
-    try {
-        const x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
-    }
-    catch (e) {
-        return e    (storage && storage.length !== 0);
-    }
-}
 
-const logStorage = () => {
-    console.log(localStorage)
-}
 
 class Todo {
-    constructor (title, description, dueDate, priority, project, notes, checklist) {
+    constructor (id, title, description, dueDate, priority, project, notes, checklist) {
+        this.id = id;
         this.title = title; 
         this.description = description;
         this.dueDate = dueDate;
@@ -27,35 +13,151 @@ class Todo {
     }
 }
 
-    // test todo
-const today = new Todo('today', 'things to do today','april 10', 'low');
 
 
-const storeItem = (item) => {
+
+const displayController = (() => {
+
+    const fullInbox = () => {
+        for (let key of Object.keys(localStorage)) {
+            if (key != 'id') {
+                console.log(JSON.parse(localStorage[key]))
+            }
+        }
+
+    }
+    
+    const updateInbox = (param) => {
+
+
+        return inbox;
+    }
+
+    return {
+        fullInbox
+    }
+})()
+
+
+
+const storage = (() => {
+        // setup ID counter    
+    if (localStorage.getItem('id') == null) {
+        localStorage.setItem('id', '0');
+    }
+    
+    
+
+    const incrementID = () => {
+        let x = parseFloat(localStorage.getItem('id'));
+        x++;
+        localStorage.setItem('id', `${x}`)
+    }
+
+    const getID = () => {
+        return localStorage.getItem('id');
+    }
+
+    const storageAvailable = () => {
+        let storage = localStorage
+        try {
+            const x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        }
+        catch (e) {
+            return e    (storage && storage.length !== 0);
+        }
+    }
+
+    const storeItem = (item) => {
     if (storageAvailable) {
-       // for now manually store item w param
-    localStorage.setItem(item.title, JSON.stringify(item))
+        // for now manually store item w param
+        localStorage.setItem(item.id, JSON.stringify(item))
+        storage.incrementID();
+        // logic to store item from html 
+        // form goes somewhere here 
+        }
+    };
 
-    // logic to store item from html 
-    // form goes somewhere here 
+    const removeItem = (item) => {
+        // for now manually remove item w param
+        localStorage.removeItem(item.id);
+
+        // logic to remove item from DOM;
+        // goes here
     }
-};
 
-const removeItem = (item) => {
-    // for now manually remove item w param
-    localStorage.removeItem(item.title);
-
-    // logic to remove item from DOM;
-    // goes here
-}
-
-    // check if item in storage;
-const itemInStorage = (storage, todo) => {
-    for (let item of Object.keys(storage)) {
-        if (item === todo.title) { 
-            console.log('found item'); return true }
+    const get = (item) => {
+        return JSON.parse(localStorage.getItem(item))
     }
-    console.log('this item doesn\'t exist'); return false;
-}
 
 
+        // check if item in storage;
+    const itemInStorage = (todo) => {
+        for (let item of Object.keys(localStorage)) {
+            if (item === todo.title) { 
+                console.log('found item'); return true }
+        }
+        console.log('this item doesn\'t exist'); return false;
+    }
+
+    const storeProject = (project) => {
+        if (localStorage.getItem('myProjectList') == null ) {
+            localStorage.setItem('myProjectList', project);
+            return;
+        } else {
+            let list = localStorage.getItem('myProjectList').split(',')
+            list.push(project);
+            localStorage.setItem('myProjectList', list);
+        }
+    }
+
+    const getProjects = () => {
+        return localStorage.getItem('myProjectList');
+    }
+
+    
+
+    return {
+        incrementID,
+        getID,
+        storageAvailable,
+        storeItem,
+        get,
+        removeItem,
+        itemInStorage,
+        storeProject,
+        getProjects
+    }
+})();
+
+
+
+
+
+
+
+
+
+export { storage, displayController, Todo }
+
+
+
+
+/////------------------- TESTING
+
+    // test todo
+// const today = new Todo(getID(), 'today', 'things to do today','april 10', 'low');
+// const tomorrow = new Todo(getID(), 'tomorrow', 'do stuff', 'tomorrow', 'medium');
+
+// storage.storeItem(new Todo(storage.getID(), 'today', 'things to do today','april 10', 'low'));
+
+// storage.storeItem(new Todo(storage.getID(), 'tomorrow', 'do stuff', 'tomorrow', 'medium'));
+
+
+// console.log(localStorage)
+// console.log(storage.get(0).title)
+
+// console.log(storage.getProjects()); 
