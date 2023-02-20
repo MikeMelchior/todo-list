@@ -111,7 +111,7 @@ const storage = (() => {
             let list = JSON.parse(localStorage.getItem('myProjectList').split(','));
             
             list.push(project);
-            localStorage.setItem('myProjectList', JSON.stringify(list));
+            localStorage.setItem('myProjectList', JSON.stringify(list)); 
         }
         // if (localStorage.getItem('myProjectList') == null ) {
         //     localStorage.setItem('myProjectList', project);

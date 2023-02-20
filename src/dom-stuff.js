@@ -81,7 +81,7 @@ const page = () => {
                         p.textContent = 'ADD NEW PROJECT '
                 // "PROJECTS" title
 
-                    // add new project +
+                    // add new project + 
                     element.append(h2, p, form)
                 return element;
             }
