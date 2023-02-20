@@ -105,17 +105,35 @@ const storage = (() => {
 
     const storeProject = (project) => {
         if (localStorage.getItem('myProjectList') == null ) {
-            localStorage.setItem('myProjectList', project);
+            localStorage.setItem('myProjectList', JSON.stringify([project]));
             return;
         } else {
-            let list = localStorage.getItem('myProjectList').split(',')
+            let list = JSON.parse(localStorage.getItem('myProjectList').split(','));
+            
             list.push(project);
-            localStorage.setItem('myProjectList', list);
+            localStorage.setItem('myProjectList', JSON.stringify(list));
         }
+        // if (localStorage.getItem('myProjectList') == null ) {
+        //     localStorage.setItem('myProjectList', project);
+        //     return;
+        // } else {
+        //     let list = localStorage.getItem('myProjectList').split(',')
+        //     list.push(project);
+        //     localStorage.setItem('myProjectList', list);
+        // }
     }
 
     const getProjects = () => {
         return localStorage.getItem('myProjectList');
+    }
+
+    const deleteProject = (project) => {
+        let list = localStorage.getItem('myProjectList').split(',');
+        if (list.indexOf(project) !== -1) {
+            list.splice(list.indexOf(project), 1);
+            localStorage.setItem('myProjectList', list);
+        }
+        
     }
 
     
@@ -129,12 +147,13 @@ const storage = (() => {
         removeItem,
         itemInStorage,
         storeProject,
+        deleteProject,
         getProjects
     }
 })();
 
 
-
+// storage.deleteProject('New Project 2');
 
 
 

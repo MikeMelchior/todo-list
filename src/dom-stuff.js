@@ -102,9 +102,11 @@ const page = () => {
 
     const content = () => {
         const element = createClassedElement('div', 'content');
-            const testElement = createClassedElement('div', 'test');
-
-            element.append(testElement);
+            const currentInbox = createClassedElement('div', 'inbox-title');
+                const currentH2 = createClassedElement('h2');
+                currentH2.textContent = `Current Inbox`
+                currentInbox.appendChild(currentH2);
+            element.append(currentInbox);
         return element;
     }
 
@@ -217,11 +219,14 @@ document.querySelector('.project-form').addEventListener('submit', (event) => {
   event.preventDefault()
 })
 
+    // display projects on page load
 document.addEventListener('DOMContentLoaded', () => {
-    index.storage.getProjects().split(',').forEach(element => {
-        let p = createClassedElement('p', 'project');
-        p.textContent = element;
-        document.querySelector('.projects').appendChild(p)
-    });
+    if (index.storage.getProjects() !== null) {
+        JSON.parse(index.storage.getProjects()).forEach(element => {
+            let p = createClassedElement('p', 'project');
+            p.textContent = element;
+            document.querySelector('.projects').appendChild(p)
+        });
+    }
 })
 

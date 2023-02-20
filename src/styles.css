@@ -75,6 +75,7 @@ header {
     background-color: var(--lightCyan);
     display: flex;
     flex-wrap: wrap;
+    
 }
 
     .sidebar {
@@ -96,6 +97,7 @@ header {
             opacity: 0;
             visibility: hidden;
             width: 0px;
+            padding: 0;
         }
         .full-screen {
             width: 100vw;
@@ -166,14 +168,14 @@ header {
                     padding: 7px;
                     border-radius: 5px;
                     font-size: 14px;
-                    border: 2px solid red;
+                    border: 1px solid red;
                     color:  var(--blackOlive);
                     font-weight: 700;
                     background-color: var(--apricot);
                     cursor: pointer;
                 }
                 .project-form button:nth-child(1) {
-                    border: 2px solid green;
+                    border: 1px solid green;
                     background-color: var(--tiffanyBlue);
                 }
                 
@@ -185,7 +187,20 @@ header {
     .content {
         background-color: var(--lightCyan);
         flex: auto;
+        font-family: Quicksand;
     }
+
+        .inbox-title {
+            width: 90%;
+            height: 90px;
+            margin: 30px auto;
+            background-color: #94d1be52;
+            display: flex;
+            align-items: center;
+            padding-left: 3rem;
+            font-size: 22px;
+            border-bottom: 5px ridge rgba(128, 128, 128, 0.226);
+        }
 
 
 footer {
