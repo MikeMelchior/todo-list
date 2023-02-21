@@ -46,6 +46,7 @@ body {
 header {
     grid-area: 1 / 1 / 2 / 3;
     font-family: Quicksand;
+    height: 56px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -188,23 +189,45 @@ header {
         background-color: var(--lightCyan);
         flex: auto;
         font-family: Quicksand;
+        position: relative;
     }
 
         .inbox-title {
             width: 90%;
-            height: 90px;
-            margin: 30px auto;
-            background-color: #94d1be52;
+            height: 67px;
+            margin: 0px auto;
             display: flex;
-            align-items: center;
+            align-items: end;
             padding-left: 3rem;
             font-size: 22px;
             border-bottom: 5px ridge rgba(128, 128, 128, 0.226);
         } 
+        .inbox-title h2 {
+            font-weight: 100;
+        }
+        .sleepy-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+            .sleepy {
+                width: 300px;
+                height: 300px;
+            }
+            .sleepy-text {
+                margin-top: -50px;
+                padding-bottom: 50px;
+                font-size: 18px;
+            }
+        
 
 
 footer {
     font-family: Dekko;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
 }
 
 a {

@@ -15,31 +15,6 @@ class Todo {
 
 
 
-
-const displayController = (() => {
-
-    const fullInbox = () => {
-        for (let key of Object.keys(localStorage)) {
-            if (key != 'id') {
-                console.log(JSON.parse(localStorage[key]))
-            }
-        }
-
-    }
-    
-    const updateInbox = (param) => {
-
-
-        return inbox;
-    }
-
-    return {
-        fullInbox
-    }
-})()
-
-
-
 const storage = (() => {
         // setup ID counter    
     if (localStorage.getItem('id') == null) {
@@ -72,12 +47,26 @@ const storage = (() => {
     }
 
     const storeItem = (item) => {
-    if (storageAvailable) {
-        // for now manually store item w param
-        localStorage.setItem(item.id, JSON.stringify(item))
-        storage.incrementID();
+        if (storageAvailable) {
+            if (localStorage.getItem('myTodoList') == null) {
+                localStorage.setItem('myTodoList', JSON.stringify([item]));
+                storage.incrementID();
+                return;
+            } else {
+                let list = JSON.parse(localStorage.getItem('myTodoList').split(','));
+                list.push(item);
+                localStorage.setItem('myTodoList', JSON.stringify(list)); 
+                storage.incrementID();
+            }
+
+
+
+
+
         // logic to store item from html 
         // form goes somewhere here 
+        } else {
+            alert('no storage available');
         }
     };
 
@@ -113,14 +102,6 @@ const storage = (() => {
             list.push(project);
             localStorage.setItem('myProjectList', JSON.stringify(list)); 
         }
-        // if (localStorage.getItem('myProjectList') == null ) {
-        //     localStorage.setItem('myProjectList', project);
-        //     return;
-        // } else {
-        //     let list = localStorage.getItem('myProjectList').split(',')
-        //     list.push(project);
-        //     localStorage.setItem('myProjectList', list);
-        // }
     }
 
     const getProjects = () => {
@@ -128,11 +109,19 @@ const storage = (() => {
     }
 
     const deleteProject = (project) => {
-        let list = localStorage.getItem('myProjectList').split(',');
+        let list = JSON.parse(localStorage.getItem('myProjectList').split(','));
         if (list.indexOf(project) !== -1) {
             list.splice(list.indexOf(project), 1);
-            localStorage.setItem('myProjectList', list);
+            localStorage.setItem('myProjectList', JSON.stringify(list))
         }
+
+
+
+        // let list = localStorage.getItem('myProjectList').split(',');
+        // if (list.indexOf(project) !== -1) {
+        //     list.splice(list.indexOf(project), 1);
+        //     localStorage.setItem('myProjectList', list);
+        // }
         
     }
 
@@ -153,30 +142,50 @@ const storage = (() => {
 })();
 
 
-// storage.deleteProject('New Project 2');
+const dayFuncs = (() => {
+    const dayLength = 1000*60*60*24;
+    const weekLength = dayLength * 7;
+
+    const now = () => {
+        return new Date().getTime();
+    }
+
+    const isWithinDay = (now, day) => {
+        return ((day - now) < dayLength);
+    }
+
+    const isWithinWeek = (now, day) => {
+        return ((day - now) < weekLength);
+    }
+
+    return {
+        now,
+        isWithinDay,
+        isWithinWeek
+    }
+})()
 
 
 
-
-
-
-export { storage, displayController, Todo }
+export { storage, Todo }
 
 
 
 
 /////------------------- TESTING
 
-    // test todo
-// const today = new Todo(getID(), 'today', 'things to do today','april 10', 'low');
-// const tomorrow = new Todo(getID(), 'tomorrow', 'do stuff', 'tomorrow', 'medium');
-
 // storage.storeItem(new Todo(storage.getID(), 'today', 'things to do today','april 10', 'low'));
-
 // storage.storeItem(new Todo(storage.getID(), 'tomorrow', 'do stuff', 'tomorrow', 'medium'));
 
 
-// console.log(localStorage)
-// console.log(storage.get(0).title)
 
-// console.log(storage.getProjects()); 
+
+
+// setTimeout(() => {
+//     displayController.selectInbox();
+// }, 10);
+
+
+// let x = new Date('Feb 28 2023 14:01:00').getTime();
+// console.log(dayFuncs.now())
+// console.log(dayFuncs.isWithinWeek(dayFuncs.now(), x));

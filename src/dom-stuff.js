@@ -1,7 +1,7 @@
 import './styles.css';
 import Icon from './menu.svg';
-import * as index from './index.js'
-
+import * as index from './index.js';
+import icon from './sleepy.png';
 
 
 const createClassedElement = (element, className) => {
@@ -20,7 +20,7 @@ const header = () => {
             menuButton.src = Icon;
             menuButton.id = 'menu-button';
         const h1 = createClassedElement('h1')
-        h1.textContent = 'current '
+        // h1.textContent = 'Todo list'
             // add text content for selected project/inbox
 
     element.append(menuButton, h1)
@@ -86,6 +86,25 @@ const page = () => {
                 return element;
             }
 
+            
+
+            element.append(home(), projects());
+        return element;
+    }
+
+    const content = () => {
+        const element = createClassedElement('div', 'content');
+            const currentInbox = createClassedElement('div', 'inbox-title');
+                const currentH2 = createClassedElement('h2', 'inbox-h2');
+                currentH2.textContent = `Current Inbox`
+                currentInbox.appendChild(currentH2);
+            
+            
+            
+            
+            
+            
+            
             const footer = () => {
                 const element = createClassedElement('footer', 'footer');
                     const para = createClassedElement('a');
@@ -96,17 +115,11 @@ const page = () => {
                 return element
             }
 
-            element.append(home(), projects(), footer());
-        return element;
-    }
 
-    const content = () => {
-        const element = createClassedElement('div', 'content');
-            const currentInbox = createClassedElement('div', 'inbox-title');
-                const currentH2 = createClassedElement('h2');
-                currentH2.textContent = `Current Inbox`
-                currentInbox.appendChild(currentH2);
-            element.append(currentInbox);
+
+
+            
+            element.append(currentInbox, footer());
         return element;
     }
 
@@ -126,6 +139,48 @@ try {
 /////
 /////-------------//////
 /////
+
+
+const displayController = (() => {
+
+    const fullInbox = () => {
+        // get array of todos
+        let x = JSON.parse(localStorage.myTodoList);
+
+    }
+    
+    const selectInbox = () => {
+        document.querySelector('.inbox-h2').textContent = 'hello'
+    }
+
+    const updateInbox = (param) => {
+
+
+        return inbox;
+    }
+
+    const displaySleepyCat = () => {
+        const div = createClassedElement('div', 'sleepy-container');
+            const p = createClassedElement('p', 'sleepy-text');
+                p.textContent = 'You have no current tasks';
+            const img = new Image();
+                img.src = icon;
+                img.classList.add('sleepy');
+            div.append(img, p);
+        let content = document.querySelector('.content');
+        if (true) {
+            content.insertBefore(div, content.lastChild);
+        } 
+    }
+
+    return {
+        fullInbox,
+        selectInbox,
+        displaySleepyCat
+    }
+})()
+
+displayController.displaySleepyCat();
 
 
 const menuHider = (x) => {
@@ -172,9 +227,18 @@ const clearNewProjectForm = () => {
     document.querySelector('#new-project-name').value = '';
 };
 
-const addProject = () => {
+const addProjectToMenu = () => {
     let exists;
     let projectName = document.querySelector('#new-project-name').value;
+    if (projectName.length < 3) {
+        console.log(`project name is ${projectName.length} chars long`)
+        alert('Project name must be between 3 and 18 characters');
+        return;
+    }
+    if (projectName.length > 18) {
+        alert('Project name must be between 3 and 18 characters');
+        return;
+    }
     let projects = document.querySelector('.projects');
       // check if project already exists
     projects.childNodes.forEach(node => {
@@ -213,7 +277,7 @@ document.querySelector('.new-project-cancel').addEventListener('click', () => {
     clearNewProjectForm();
 });
 
-document.querySelector('.add-button').addEventListener('click', addProject)
+document.querySelector('.add-button').addEventListener('click', addProjectToMenu)
 
 document.querySelector('.project-form').addEventListener('submit', (event) => {
   event.preventDefault()
