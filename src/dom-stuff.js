@@ -1,7 +1,9 @@
 import './styles.css';
-import Icon from './menu.svg';
+import menuIcon from './menu.svg';
 import * as index from './index.js';
-import icon from './sleepy.png';
+import catIcon from './sleepy.png';
+import plusIcon from './plus.png';
+
 
 
 const createClassedElement = (element, className) => {
@@ -17,13 +19,16 @@ document.body.appendChild(mainDiv);
 const header = () => {
     const element = createClassedElement('header');
         const menuButton = new Image();
-            menuButton.src = Icon;
+            menuButton.src = menuIcon;
             menuButton.id = 'menu-button';
-        const h1 = createClassedElement('h1')
-        // h1.textContent = 'Todo list'
-            // add text content for selected project/inbox
+        const addTaskButton = createClassedElement('div', 'add-task-button');
+            addTaskButton.textContent = 'ADD TASK'
+            const plus = new Image();
+            plus.src = plusIcon;
+            plus.id = 'add-task-plus'
+            addTaskButton.append(plus);
 
-    element.append(menuButton, h1)
+    element.append(menuButton, addTaskButton)
     return element;
 }
 
@@ -77,17 +82,19 @@ const page = () => {
                                 cancelButton.type = 'button'
                             buttonsDiv.append(addButton, cancelButton)
                         form.append(nameLabel, nameInput, buttonsDiv)
-                    const p = createClassedElement('p', 'new-project');
-                        p.textContent = 'ADD NEW PROJECT '
-                // "PROJECTS" title
-
+                    const newProject = createClassedElement('div', 'new-project');
+                        const p = createClassedElement('p');
+                            p.textContent = 'ADD NEW PROJECT';
+                        const plus = new Image();
+                            plus.src = plusIcon;
+                            plus.id = 'plus'
+                        newProject.append(p, plus);
                     // add new project + 
-                    element.append(h2, p, form)
+                    element.append(h2, newProject, form)
                 return element;
             }
 
             
-
             element.append(home(), projects());
         return element;
     }
@@ -100,11 +107,6 @@ const page = () => {
                 currentInbox.appendChild(currentH2);
             
             
-            
-            
-            
-            
-            
             const footer = () => {
                 const element = createClassedElement('footer', 'footer');
                     const para = createClassedElement('a');
@@ -114,9 +116,6 @@ const page = () => {
                     element.appendChild(para)
                 return element
             }
-
-
-
 
             
             element.append(currentInbox, footer());
@@ -128,8 +127,51 @@ const page = () => {
     return element;
 }
 
+const form = () => {
+    const element = createClassedElement('div', 'task-form-container');
+
+        const formTitle = createClassedElement('p', 'form-title');
+            formTitle.textContent = 'New To-Do'
+
+        const form = createClassedElement('form','task-form');
+        form.method = '';
+        form.action = '';
+
+            const titleInput = createClassedElement('textarea', 'todo-title');
+                titleInput.required = true;
+                titleInput.placeholder = "Title: ex. 'Gym'";
+                titleInput.rows = '2'
+                titleInput.max = 40;
+
+            const descriptionInput = createClassedElement('textarea', 'todo-description');
+                descriptionInput.required = true;
+                descriptionInput.placeholder = "Description: ex. 'Work on cardio'";
+                descriptionInput.rows = '5'
+
+            const container = createClassedElement('div', 'due-date-prio-container');
+                const dueDateInput = createClassedElement('input', 'todo-due-date');
+                    dueDateInput.type = 'date';
+                    dueDateInput.required = true;
+                    dueDateInput.placeholder = 'DD/MM/YYYY';
+                const priority = createClassedElement('select', 'priority-menu');
+                    priority.innerHTML = `<option value="" disabled selected>Priority (optional)</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>`;
+                container.append(dueDateInput, priority)
+
+            const submitTask = createClassedElement('button', 'submit-task');
+                submitTask.type = 'submit';
+                submitTask.textContent = 'ADD TO DO'
+
+            form.append(titleInput, descriptionInput, container, submitTask)
+
+        element.append(formTitle, form)
+    return element;
+}
+
 try {
-    document.querySelector('.main').append(header(), page());
+    document.querySelector('.main').append(header(), page(), form());
 } catch (e){
     console.log(e)
 }
@@ -164,7 +206,7 @@ const displayController = (() => {
             const p = createClassedElement('p', 'sleepy-text');
                 p.textContent = 'You have no current tasks';
             const img = new Image();
-                img.src = icon;
+                img.src = catIcon;
                 img.classList.add('sleepy');
             div.append(img, p);
         let content = document.querySelector('.content');
@@ -227,7 +269,7 @@ const clearNewProjectForm = () => {
     document.querySelector('#new-project-name').value = '';
 };
 
-const addProjectToMenu = () => {
+const addProject = () => {
     let exists;
     let projectName = document.querySelector('#new-project-name').value;
     if (projectName.length < 3) {
@@ -257,6 +299,14 @@ const addProjectToMenu = () => {
     };
 };
 
+const addToDo = () => {
+    let title = document.querySelector('.todo-title')
+    let description = document.querySelector('.todo-description')
+    let date = document.querySelector('.todo-due-date')
+    let priority = document.querySelector('.priority-menu')
+    console.log(title.value, description.value, date.value, priority.value )
+}   
+
 /////
 /////
 /////----------- EVENT LISTENERS
@@ -277,7 +327,7 @@ document.querySelector('.new-project-cancel').addEventListener('click', () => {
     clearNewProjectForm();
 });
 
-document.querySelector('.add-button').addEventListener('click', addProjectToMenu)
+document.querySelector('.add-button').addEventListener('click', addProject)
 
 document.querySelector('.project-form').addEventListener('submit', (event) => {
   event.preventDefault()
@@ -292,5 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.projects').appendChild(p)
         });
     }
+})
+
+
+document.querySelector('.submit-task').addEventListener('click', () => {
+    event.preventDefault();
+    addToDo();
 })
 
