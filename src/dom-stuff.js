@@ -129,6 +129,12 @@ const page = () => {
 
 const form = () => {
     const element = createClassedElement('div', 'task-form-container');
+    element.classList.add('closed')
+
+        const exitButton = createClassedElement('div', 'task-form-exit');
+            const x = new Image();
+            x.src = plusIcon;
+            exitButton.append(x);
 
         const formTitle = createClassedElement('p', 'form-title');
             formTitle.textContent = 'New To-Do'
@@ -166,7 +172,7 @@ const form = () => {
 
             form.append(titleInput, descriptionInput, container, submitTask)
 
-        element.append(formTitle, form)
+        element.append(exitButton, formTitle, form)
     return element;
 }
 
@@ -179,19 +185,20 @@ try {
 
 
 /////
-/////-------------//////
+/////----------------------------------------------------//////
 /////
 
 
 const displayController = (() => {
-
+    let activeInbox;
     const fullInbox = () => {
         // get array of todos
         let x = JSON.parse(localStorage.myTodoList);
-
+        console.log(x);
     }
     
     const selectInbox = () => {
+
         document.querySelector('.inbox-h2').textContent = 'hello'
     }
 
@@ -221,53 +228,11 @@ const displayController = (() => {
         displaySleepyCat
     }
 })()
-
+    // manually display cat
 displayController.displaySleepyCat();
 
+// displayController.fullInbox();
 
-const menuHider = (x) => {
-    let menu = document.querySelector('div.sidebar');
-    if (x.matches) {
-        menu.classList.add('closed');
-    } else {
-        menu.classList.remove('closed');
-    }
-};
-
-const fullscreenMenu = (x) => {
-    let menu = document.querySelector('div.sidebar');
-    if(x.matches) {
-        menu.classList.add('full-screen');
-    } else {
-        menu.classList.remove('full-screen');
-    };
-};
-
-/////
-///// SIDEBAR MEDIA QUERY LISTENERS;
-/////
-let hideMenu = window.matchMedia("(max-width: 400px)");
-menuHider(hideMenu);
-hideMenu.addEventListener('change', menuHider);
-
-let sizeMenu = window.matchMedia("(max-width: 675px)");
-sizeMenu.addEventListener('change', fullscreenMenu);
-/////
-/////-----------------------------
-/////
-
-
-const toggleSidebar = () => {
-    document.querySelector('.sidebar').classList.toggle('closed');
-}
-
-const toggleNewProjectForm = () => {
-    document.querySelector('.project-form').classList.toggle('hidden');
-};
-
-const clearNewProjectForm = () => {
-    document.querySelector('#new-project-name').value = '';
-};
 
 const addProject = () => {
     let exists;
@@ -300,38 +265,115 @@ const addProject = () => {
 };
 
 const addToDo = () => {
-    let title = document.querySelector('.todo-title')
-    let description = document.querySelector('.todo-description')
-    let date = document.querySelector('.todo-due-date')
-    let priority = document.querySelector('.priority-menu')
-    console.log(title.value, description.value, date.value, priority.value )
-}   
+    let title = document.querySelector('.todo-title');
+    let description = document.querySelector('.todo-description');
+    let date = document.querySelector('.todo-due-date');
+    let priority = document.querySelector('.priority-menu');
+
+
+    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value);
+    console.log(todo);
+    index.storage.storeItem(todo);
+    title.value = '';
+    description.value = '';
+    date.value = '';
+    priority.value = '';
+}
+
+const addNotes = (id) => {
+        //grab todo from storage
+    let obj = JSON.parse(localStorage.myTodoList)[id];
+        //make a copy of todos list;
+    let newList = JSON.parse(localStorage.myTodoList);
+        //set notes of todo
+    obj.notes = 'do some stuff'
+        // update value in todos list
+    newList[id] = obj;
+        // restore todos list in local storage
+    localStorage.setItem('myTodoList', JSON.stringify(newList));
+}
+
+
+
+const removeToDo = () => {
+
+}
 
 /////
-/////
-/////----------- EVENT LISTENERS
-/////
+/////-----------------------------------------------------------------------------------------
 /////
 
-    // hide 
+
+
+/////
+///// SIDEBAR MEDIA QUERY LISTENERS--------------------------------
+/////
+
+const menuHider = (x) => {
+    let menu = document.querySelector('div.sidebar');
+    if (x.matches) {
+        menu.classList.add('closed');
+    } else {
+        menu.classList.remove('closed');
+    }
+};
+
+const fullscreenMenu = (x) => {
+    let menu = document.querySelector('div.sidebar');
+    if(x.matches) {
+        menu.classList.add('full-screen');
+    } else {
+        menu.classList.remove('full-screen');
+    };
+};
+
+
+let hideMenu = window.matchMedia("(max-width: 400px)");
+menuHider(hideMenu);
+hideMenu.addEventListener('change', menuHider);
+
+let sizeMenu = window.matchMedia("(max-width: 800px)");
+sizeMenu.addEventListener('change', fullscreenMenu);
+
+
+/////
+/////--------------------------------------------------------------
+/////
+
+
+
+/////
+///// SIDEBAR EVENT LISTENERS & FUNCTIONS--------------------------------------
+/////
+const toggleSidebar = () => {
+    document.querySelector('.sidebar').classList.toggle('closed');
+}
+
+const toggleNewProjectForm = () => {
+    document.querySelector('.project-form').classList.toggle('hidden');
+};
+
+const clearNewProjectForm = () => {
+    document.querySelector('#new-project-name').value = '';
+};
+
+    // hamburger menu button, toggles sidebar
 document.querySelector('#menu-button').addEventListener('click', () => {
     toggleSidebar();
 });
 
+    // toggles new project form on click of new project button
 document.querySelector('.new-project').addEventListener('click', () => {
     toggleNewProjectForm();
 });
 
+    // cancels and resets new project input 
 document.querySelector('.new-project-cancel').addEventListener('click', () => {
     toggleNewProjectForm();
     clearNewProjectForm();
 });
-
+    // adds project to storage
 document.querySelector('.add-button').addEventListener('click', addProject)
-
-document.querySelector('.project-form').addEventListener('submit', (event) => {
-  event.preventDefault()
-})
 
     // display projects on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -343,10 +385,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 })
+/////
+/////------------------------------------------------------
+/////
 
 
-document.querySelector('.submit-task').addEventListener('click', () => {
-    event.preventDefault();
-    addToDo();
+
+/////
+/////
+/////-----NEW TASK EVENT LISTENERS-----------------------------------
+/////
+/////
+
+const toggleNewTaskWindow = () => {
+    document.querySelector('.task-form-container').classList.toggle('closed');
+}
+    // open new task window on "add task" button click
+document.querySelector('.add-task-button').addEventListener('click', () => {
+    toggleNewTaskWindow();
 })
+
+    // close new task window with exit button
+document.querySelector('.task-form-exit').addEventListener('click', () => {
+    toggleNewTaskWindow();
+})
+
+    // add to do and close new task window
+document.querySelector('.submit-task').addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    if (document.querySelector('.todo-title').value 
+    && document.querySelector('.todo-description').value 
+    && document.querySelector('.todo-due-date').value) {
+        addToDo();    
+        toggleNewTaskWindow();
+    }
+    
+})
+
+// let title = ;
+//     let description = ;
+//     let ;
+//     let priority = document.querySelector('.priority-menu');
+
 

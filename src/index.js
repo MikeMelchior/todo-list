@@ -57,13 +57,6 @@ const storage = (() => {
                 localStorage.setItem('myTodoList', JSON.stringify(list)); 
                 storage.incrementID();
             }
-
-
-
-
-
-        // logic to store item from html 
-        // form goes somewhere here 
         } else {
             alert('no storage available');
         }
@@ -97,7 +90,6 @@ const storage = (() => {
             return;
         } else {
             let list = JSON.parse(localStorage.getItem('myProjectList').split(','));
-            
             list.push(project);
             localStorage.setItem('myProjectList', JSON.stringify(list)); 
         }
@@ -113,15 +105,6 @@ const storage = (() => {
             list.splice(list.indexOf(project), 1);
             localStorage.setItem('myProjectList', JSON.stringify(list))
         }
-
-
-
-        // let list = localStorage.getItem('myProjectList').split(',');
-        // if (list.indexOf(project) !== -1) {
-        //     list.splice(list.indexOf(project), 1);
-        //     localStorage.setItem('myProjectList', list);
-        // }
-        
     }
 
     
@@ -180,9 +163,6 @@ export { storage, Todo }
 
 
 
-// setTimeout(() => {
-//     displayController.selectInbox();
-// }, 10);
 
 
 // let x = new Date('Feb 28 2023 14:01:00').getTime();

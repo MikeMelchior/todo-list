@@ -110,13 +110,18 @@ header {
         grid: auto 1fr / 1fr;
         opacity: 1;
         visibility: visible;
-        transition: opacity 0.5s, width 0.75s, visibility 0.5s;
+        transition: opacity 0.5s, width 0.75s, height 0.75s,
+        margin 0.75s, visibility 0.5s;
     }
-        .sidebar.closed {
+        .sidebar.closed, 
+        .task-form-container.closed {
             opacity: 0;
             visibility: hidden;
             width: 0px;
             padding: 0;
+            height: 0;
+            border: 0;
+            margin: 0;
         }
         .full-screen {
             width: 100vw;
@@ -256,25 +261,44 @@ footer {
 }
 
 .task-form-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin:auto;
-    width: fit-content;
-    height: fit-content;
     background-color: var(--white);
     border: 4px solid var(--ashGray);
     border-radius: 5px;
     font-family: Quicksand;
-}
+    transition: opacity 0.25s, visibility 0.25s, height 0.75s,
+                width 0.75s;
+} 
+    .task-form-container, 
+    .task-form-container.closed {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin:auto;
+        width: fit-content;
+        height: fit-content;
+    }
     .task-form {
         height: fit-content;
         padding: 2rem;
         display: grid;
         grid: auto auto auto / 1fr 1fr;
     }
+        .task-form-exit {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            cursor: pointer;
+            padding: 5px;
+            display: grid;
+            place-items: center;
+        }
+        .task-form-exit img{
+            height: 20px;
+            width: 20px;
+            transform: rotate(45deg);
+        }
         .form-title {
             margin: 2rem 2rem 0 2rem;
             font-size: 26px;
@@ -338,7 +362,9 @@ footer {
                 color: var(--white);
             }
 
-
+.closed {
+    pointer-events: none;
+}
 
 a {
     text-decoration: none;
@@ -347,3 +373,6 @@ a {
 a:hover {
     color: #4B4B4B;
 }
+
+
+
