@@ -237,6 +237,64 @@ header {
         .inbox-title h2 {
             font-weight: 100;
         }
+
+        .todo {
+            position: relative;
+            border: 1px solid;
+            border-radius: 3px;
+            background-color: var(--tiffanyBlue);
+            width: 90%;
+            margin: 1rem auto;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+            .priority-line {
+                position: absolute;
+                left: 0;
+                width: 7px;
+                height: 100%;
+            }
+            .todo-title {
+                flex: auto;
+                z-index: 2;
+                padding-left: 15px;
+                font-size: 18px;
+                
+            }
+            .todo:hover {
+                background-color: #a6dfcd;
+            }
+
+            .todo img {
+                height: 25px;
+            }
+            #hidden-options {
+                border-radius: 5px;
+                border: 1px solid;
+                position: absolute;
+                background-color: var(--white);
+                right: 50px;
+                bottom: 30px;
+                display: flex;
+                flex-direction: column;
+                
+            }
+                #hidden-options div {
+                    opacity: 1;
+                    width: 80px;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    border-radius: 5px;
+                    padding: 5px;
+                }
+                    #hidden-options div:hover {
+                        background-color: #eee;
+                    }
+
         .sleepy-container {
             display: flex;
             flex-direction: column;
@@ -252,6 +310,8 @@ header {
                 padding-bottom: 50px;
                 font-size: 18px;
             }
+
+        
       
 footer {
     font-family: Dekko;
@@ -304,7 +364,7 @@ footer {
             font-size: 26px;
             border-bottom: 1px solid;
         }
-        .todo-title,
+        .todo-form-title,
         .todo-description,
         .todo-due-date,
         .priority-menu,
@@ -317,7 +377,7 @@ footer {
             border: 1px solid #94d1be8c;
             font-size: 16px;
         }
-        .todo-title {
+        .todo-form-title {
             grid-area: 1 / 1 / 2 / 3;
             height: 50px;
             width: 70vw;
@@ -374,5 +434,10 @@ a:hover {
     color: #4B4B4B;
 }
 
-
+.hidden {
+    position: absolute;
+    opacity: 0;
+    visibility: 0;
+    pointer-events: none;
+}
 

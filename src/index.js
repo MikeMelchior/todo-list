@@ -19,6 +19,9 @@ const storage = (() => {
     if (localStorage.getItem('id') == null) {
         localStorage.setItem('id', '0');
     }
+    if (localStorage.getItem('myTodoList') == null) {
+        localStorage.setItem('myTodoList', JSON.stringify([]))
+    }
     
     
 

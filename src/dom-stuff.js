@@ -3,6 +3,8 @@ import menuIcon from './menu.svg';
 import * as index from './index.js';
 import catIcon from './sleepy.png';
 import plusIcon from './plus.png';
+import binIcon from './bin.png';
+import dotMenuIcon from './dot-menu.png';
 
 
 
@@ -105,8 +107,11 @@ const page = () => {
                 const currentH2 = createClassedElement('h2', 'inbox-h2');
                 currentH2.textContent = `Current Inbox`
                 currentInbox.appendChild(currentH2);
+            const todoContainer = createClassedElement('div', 'todos-container');
+   
             
-            
+
+
             const footer = () => {
                 const element = createClassedElement('footer', 'footer');
                     const para = createClassedElement('a');
@@ -117,10 +122,12 @@ const page = () => {
                 return element
             }
 
-            
-            element.append(currentInbox, footer());
+            element.append(currentInbox, todoContainer, footer());
         return element;
     }
+    
+
+
 
     element.append(sideBar(), content())
     
@@ -143,7 +150,7 @@ const form = () => {
         form.method = '';
         form.action = '';
 
-            const titleInput = createClassedElement('textarea', 'todo-title');
+            const titleInput = createClassedElement('textarea', 'todo-form-title');
                 titleInput.required = true;
                 titleInput.placeholder = "Title: ex. 'Gym'";
                 titleInput.rows = '2'
@@ -191,6 +198,8 @@ try {
 
 const displayController = (() => {
     let activeInbox;
+
+
     const fullInbox = () => {
         // get array of todos
         let x = JSON.parse(localStorage.myTodoList);
@@ -198,7 +207,7 @@ const displayController = (() => {
     }
     
     const selectInbox = () => {
-
+            // temp
         document.querySelector('.inbox-h2').textContent = 'hello'
     }
 
@@ -208,8 +217,21 @@ const displayController = (() => {
         return inbox;
     }
 
+    const inboxIsEmpty = () => {
+        if (JSON.parse(localStorage.myTodoList).length == 0) {
+            return true 
+        } 
+        else {
+            return false
+        }
+    }
+
+
     const displaySleepyCat = () => {
-        const div = createClassedElement('div', 'sleepy-container');
+        try {
+            document.querySelector('.sleepy-container').remove();
+        } catch {
+            const div = createClassedElement('div', 'sleepy-container');
             const p = createClassedElement('p', 'sleepy-text');
                 p.textContent = 'You have no current tasks';
             const img = new Image();
@@ -217,21 +239,131 @@ const displayController = (() => {
                 img.classList.add('sleepy');
             div.append(img, p);
         let content = document.querySelector('.content');
-        if (true) {
-            content.insertBefore(div, content.lastChild);
-        } 
+            // add conditional for if inbox is empty below
+        if (inboxIsEmpty()) {
+            content.append(div);
+        }
+    }}
+
+    const removeTodo = (id) => {
+        let currentList = JSON.parse(localStorage.myTodoList);
+        let newList = currentList.filter((todo) => {
+            if (todo.id != id) {
+                return todo
+            }
+        })
+
+        localStorage.setItem('myTodoList', JSON.stringify(newList));
+        displayController.displayAllTodos();
     }
 
+    const displayAllTodos = () => {
+        if (inboxIsEmpty() == false) {
+            const oldContainer = document.querySelector('.todos-container');
+            oldContainer.remove();
+            const container = createClassedElement('div', 'todos-container');
+            document.querySelector('.content').append(container);
+            JSON.parse(localStorage.myTodoList).forEach((todo) => {
+
+                    //create todo to add to container (title, date, options)
+                const todoContainer = createClassedElement('div', 'todo');
+
+                    const priorityLine = createClassedElement('div', 'priority-line');
+                        switch (todo.priority) {
+                            case 'Low':
+                                priorityLine.style.backgroundColor = 'green'
+                                break;
+                            case 'Medium':
+                                priorityLine.style.backgroundColor = 'yellow'
+                                break;
+                            case 'High':
+                                priorityLine.style.backgroundColor = 'red'
+                                break
+                            default:
+                                priorityLine.style.backgroundColor = 'grey'
+                                break;
+                        }
+
+                    const titleP = createClassedElement('p', 'todo-title');
+                        titleP.textContent = todo.title;
+
+                    const dateP = createClassedElement('p', 'todo-date');
+                        dateP.textContent = todo.dueDate;
+
+                    const hiddenID = createClassedElement('p', 'hidden');
+                        hiddenID.id = 'id'
+                        hiddenID.textContent = todo.id;
+
+                        //options buttons
+                    const hiddenOptions = createClassedElement('div', 'hidden');
+                        hiddenOptions.id = 'hidden-options';
+
+                        const edit = createClassedElement('div', 'options-edit');
+                            edit.textContent = 'Edit';
+                          
+                        const cancel = createClassedElement('div', 'options-cancel');
+                            cancel.textContent = 'Cancel'
+                            cancel.addEventListener('click', () => {
+                                    document.querySelector('#hidden-options').classList.toggle('hidden');
+                                })
+
+                        hiddenOptions.append(edit, cancel);
+
+                        // todo buttons
+                    const bin = new Image();
+                        bin.src = binIcon;
+                        bin.id = 'bin';
+                        bin.addEventListener('click', (e) => {
+                                // target hidden ID of todo;
+                            let x = e.target.parentElement.lastChild.textContent
+                            removeTodo(x);
+                            e.target.parentNode.remove();
+                        })
+
+                    const options = new Image();
+                        options.src = dotMenuIcon;
+                        options.id = 'options';
+                        options.addEventListener('click', (e) => {
+                            document.querySelector('#hidden-options').classList.toggle('hidden');
+                        })
+
+                    todoContainer.append(priorityLine, titleP, dateP, options, bin, hiddenOptions, hiddenID);
+                container.append(todoContainer);
+            })
+        } 
+        else {
+            displaySleepyCat();
+        }
+    }
+
+    
+
+    const clearTodoForm = () => {
+        let title = document.querySelector('.todo-form-title');
+        let description = document.querySelector('.todo-description');
+        let date = document.querySelector('.todo-due-date');
+        let priority = document.querySelector('.priority-menu');
+
+        title.value = '';
+        description.value = '';
+        date.value = '';
+        priority.value = '';
+    }
+
+
+
+displaySleepyCat();
     return {
         fullInbox,
         selectInbox,
-        displaySleepyCat
+        displaySleepyCat,
+        inboxIsEmpty,
+        clearTodoForm,
+        displayAllTodos
     }
 })()
-    // manually display cat
-displayController.displaySleepyCat();
 
-// displayController.fullInbox();
+
 
 
 const addProject = () => {
@@ -265,7 +397,7 @@ const addProject = () => {
 };
 
 const addToDo = () => {
-    let title = document.querySelector('.todo-title');
+    let title = document.querySelector('.todo-form-title');
     let description = document.querySelector('.todo-description');
     let date = document.querySelector('.todo-due-date');
     let priority = document.querySelector('.priority-menu');
@@ -274,10 +406,9 @@ const addToDo = () => {
     let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value);
     console.log(todo);
     index.storage.storeItem(todo);
-    title.value = '';
-    description.value = '';
-    date.value = '';
-    priority.value = '';
+    displayController.displaySleepyCat();
+    displayController.displayAllTodos(title.value, date.value, localStorage.id);
+    displayController.clearTodoForm();
 }
 
 const addNotes = (id) => {
@@ -405,8 +536,9 @@ document.querySelector('.add-task-button').addEventListener('click', () => {
     toggleNewTaskWindow();
 })
 
-    // close new task window with exit button
+    // close new task window and clear form with exit button
 document.querySelector('.task-form-exit').addEventListener('click', () => {
+    displayController.clearTodoForm();
     toggleNewTaskWindow();
 })
 
@@ -414,18 +546,17 @@ document.querySelector('.task-form-exit').addEventListener('click', () => {
 document.querySelector('.submit-task').addEventListener('click', (e) => {
     e.preventDefault();
     
-    if (document.querySelector('.todo-title').value 
+    if (document.querySelector('.todo-form-title').value 
     && document.querySelector('.todo-description').value 
     && document.querySelector('.todo-due-date').value) {
         addToDo();    
         toggleNewTaskWindow();
+    } else {
+        alert('Please fill in all required fields');
     }
     
 })
 
-// let title = ;
-//     let description = ;
-//     let ;
-//     let priority = document.querySelector('.priority-menu');
+
 
 
