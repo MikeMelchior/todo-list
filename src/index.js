@@ -136,7 +136,7 @@ const dayFuncs = (() => {
     }
 
     const isWithinDay = (now, day) => {
-        return ((day - now) < dayLength);
+        return ((day - now) < dayLength && (day - now) > 0);
     }
 
     const isWithinWeek = (now, day) => {
@@ -152,7 +152,8 @@ const dayFuncs = (() => {
 
 
 
-export { storage, Todo }
+export { storage, Todo, dayFuncs }
+
 
 
 

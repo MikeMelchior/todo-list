@@ -47,13 +47,13 @@ const page = () => {
                 const element = createClassedElement('div', 'home');
                     const h2 = createClassedElement('h2');
                         h2.textContent = "HOME";
-                    const inbox = createClassedElement('p');
+                    const inbox = createClassedElement('p', 'inbox');
                         inbox.textContent = "INBOX";
-                    const today = createClassedElement('p');
+                    const today = createClassedElement('p', 'inbox');
                         today.textContent = "TODAY";
-                    const thisWeek = createClassedElement('p');
+                    const thisWeek = createClassedElement('p', 'inbox');
                         thisWeek.textContent = "THIS WEEK";
-                    const important = createClassedElement('p');
+                    const important = createClassedElement('p', 'inbox');
                         important.textContent = "IMPORTANT";
 
                     element.append(h2, inbox, today, thisWeek, important)
@@ -206,9 +206,35 @@ const displayController = (() => {
         console.log(x);
     }
     
-    const selectInbox = () => {
-            // temp
-        document.querySelector('.inbox-h2').textContent = 'hello'
+        // logic for selecting inbox and propagating with appropriate todos
+    const selectInbox = (target) => {
+        document.querySelectorAll('.inbox').forEach((target) => {
+            target.classList.remove('active');
+        })
+        target.classList.add('active');
+
+            // change title depending on current inbox
+        document.querySelector('.inbox-h2').textContent = target.textContent;
+
+        if (target.textContent == 'INBOX') {
+            console.log(`You are now in the main inbox`);
+            displayController.displayAllTodos();
+            return
+        }
+        if (target.textContent == 'TODAY') {
+            console.log(`You are now in Today's inbox`)
+            JSON.parse(localStorage.myTodoList).forEach((todo) => {
+
+                console.log(index.dayFuncs.isWithinDay(index.dayFuncs.now(), new Date(todo.dueDate).getTime()))
+            })
+        }
+        // logic to propagate inbox;
+        //
+        //
+        // goes here
+        //
+        //
+        //
     }
 
     const updateInbox = (param) => {
@@ -228,22 +254,25 @@ const displayController = (() => {
 
 
     const displaySleepyCat = () => {
-        try {
-            document.querySelector('.sleepy-container').remove();
-        } catch {
-            const div = createClassedElement('div', 'sleepy-container');
+        const div = createClassedElement('div', 'sleepy-container');
             const p = createClassedElement('p', 'sleepy-text');
                 p.textContent = 'You have no current tasks';
             const img = new Image();
                 img.src = catIcon;
                 img.classList.add('sleepy');
             div.append(img, p);
-        let content = document.querySelector('.content');
+            let content = document.querySelector('.content');
+
             // add conditional for if inbox is empty below
         if (inboxIsEmpty()) {
-            content.append(div);
+            if (document.querySelector('.sleepy-container') == null) {
+                content.append(div)
+            }
+        } else {
+            if (document.querySelector('.sleepy-container') != null)
+            document.querySelector('.sleepy-container').remove();
         }
-    }}
+    }
 
     const removeTodo = (id) => {
         let currentList = JSON.parse(localStorage.myTodoList);
@@ -351,7 +380,7 @@ const displayController = (() => {
     }
 
 
-
+ // manual display
 displaySleepyCat();
     return {
         fullInbox,
@@ -387,7 +416,11 @@ const addProject = () => {
         };
     })
     if (!exists) {
-        let p = createClassedElement('p', 'project');
+        let p = createClassedElement('p', 'inbox');
+            p.addEventListener('click', (e) => {
+                displayController.selectInbox(e.target);
+            })
+
         p.textContent = projectName;
         document.querySelector('.projects').appendChild(p);
         index.storage.storeProject(projectName);
@@ -510,11 +543,20 @@ document.querySelector('.add-button').addEventListener('click', addProject)
 document.addEventListener('DOMContentLoaded', () => {
     if (index.storage.getProjects() !== null) {
         JSON.parse(index.storage.getProjects()).forEach(element => {
-            let p = createClassedElement('p', 'project');
+            let p = createClassedElement('p', 'inbox');
             p.textContent = element;
+            p.addEventListener('click', (e) => {
+                displayController.selectInbox(e.target);
+            })
             document.querySelector('.projects').appendChild(p)
         });
     }
+})
+
+document.querySelectorAll('.inbox').forEach((node) => {
+    node.addEventListener('click', (e) => {
+        displayController.selectInbox(e.target)
+    })
 })
 /////
 /////------------------------------------------------------

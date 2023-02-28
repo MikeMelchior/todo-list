@@ -213,7 +213,7 @@ header {
                     background-color: var(--tiffanyBlue);
                 }
                 
-            .project {
+            .projects .inbox {
                 margin-left: 1rem;
             }
             
@@ -441,3 +441,6 @@ a:hover {
     pointer-events: none;
 }
 
+.active {
+    background-color: var(--tiffanyBlue);
+}
