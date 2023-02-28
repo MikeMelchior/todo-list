@@ -262,7 +262,6 @@ header {
             }
             .todo-title {
                 flex: auto;
-                z-index: 2;
                 padding-left: 15px;
                 font-size: 18px;
                 

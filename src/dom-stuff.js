@@ -52,7 +52,7 @@ const page = () => {
                     const today = createClassedElement('p', 'inbox');
                         today.textContent = "TODAY";
                     const thisWeek = createClassedElement('p', 'inbox');
-                        thisWeek.textContent = "THIS WEEK";
+                        thisWeek.textContent = "NEXT 7 DAYS";
                     const important = createClassedElement('p', 'inbox');
                         important.textContent = "IMPORTANT";
 
@@ -225,7 +225,7 @@ const displayController = (() => {
                 console.log(`You are now in Today's inbox`);
                 displayController.displayTodayTodos();
                 break;
-            case 'THIS WEEK':
+            case 'NEXT 7 DAYS':
                 console.log(`You are now in This Week's inbox`);
                 displayController.displayThisWeekTodos();
                 break;
@@ -235,23 +235,9 @@ const displayController = (() => {
                 break;
             default:
                 console.log(`you are now in the ${target.textContent} inbox`)
-                // display project todos
-                //
-                //
-                //logic to filter todos by project
-                //
-                //
-                //
-                //
-
+                displayController.displayProjectTodos(target.textContent);
                 break;
         }
-    }
-
-    const updateInbox = (param) => {
-
-
-        return inbox;
     }
 
     const inboxIsEmpty = () => {
@@ -263,6 +249,15 @@ const displayController = (() => {
         }
     }
 
+    const getActiveProject = () => {
+        let projectList = [...document.querySelectorAll('.project')]
+        let currentProject = projectList.filter(project => {
+            if ([...project.classList].indexOf('active') != -1) {
+                return project;
+            }
+        })
+        return currentProject[0].textContent;
+    }
 
     const displaySleepyCat = () => {
         const div = createClassedElement('div', 'sleepy-container');
@@ -385,7 +380,7 @@ const displayController = (() => {
         if (inboxIsEmpty() == false) {
             clearCurrentInbox();
             let todaysList = JSON.parse(localStorage.myTodoList).filter((todo) => {
-                if (index.dayFuncs.isWithinDay(index.dayFuncs.now(), new Date(todo.dueDate).getTime())) {
+                if (index.dayFuncs.isWithinDay(index.dayFuncs.today(), todo.dueDate.split('-')[2])) {
                     return todo;
                 }
             })
@@ -422,14 +417,16 @@ const displayController = (() => {
     }
 
     const displayProjectTodos = (project) => {
-        //
-        //
-        //
-        ///
-        //
-        //
-        //
-
+        if (inboxIsEmpty() == false) {
+            clearCurrentInbox();
+            getActiveProject();
+            let projectList = JSON.parse(localStorage.myTodoList).filter((todo) => {
+                if(todo.project == getActiveProject()) return todo;
+            })
+            projectList.forEach((todo) => {
+                createTodo(todo);
+            })
+        }
     }
     
 
@@ -445,6 +442,10 @@ const displayController = (() => {
         priority.value = '';
     }
 
+    // manual display
+    displaySleepyCat();
+    displayAllTodos();
+
     return {
         fullInbox,
         selectInbox,
@@ -454,7 +455,8 @@ const displayController = (() => {
         displayAllTodos,
         displayTodayTodos,
         displayThisWeekTodos,
-        displayImportantTodos
+        displayImportantTodos,
+        displayProjectTodos
     }
 })()
 
@@ -496,28 +498,32 @@ const addProject = () => {
     };
 };
 
-const addToDo = () => {
+const addTodo = () => {
+        // variables to acquire form input values 
     let title = document.querySelector('.todo-form-title');
     let description = document.querySelector('.todo-description');
     let date = document.querySelector('.todo-due-date');
     let priority = document.querySelector('.priority-menu');
 
-    //
-    //
-    // logic to add project to todo
-    //
-    //
-    //
-    //
-    //
-    //
+        // sets current project key and gives value if a project is selected
+    let currentProject;
+    let projects = [...document.querySelectorAll('.project')]
 
+    projects.forEach(project => {
+        let list = [...project.classList];
+        if (list.indexOf('active') != -1) {
+            currentProject = project.textContent;
+        }
+    })
 
-    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value,);
+    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value, currentProject);
     console.log(todo);
+        // store todo in local storage
     index.storage.storeItem(todo);
+
+        // check if empty inbox image needs to be removed
     displayController.displaySleepyCat();
-    displayController.displayAllTodos(title.value, date.value, localStorage.id);
+
     displayController.clearTodoForm();
 }
 
@@ -633,19 +639,23 @@ const loadProjects = () => {
     }
 }
 
+    // prevent default of project form
+document.querySelector('.project-form').addEventListener('keypress', () => {
+    event.preventDefault();
+})
+
 document.addEventListener('DOMContentLoaded', () => {
         // display projects on page load
     loadProjects();
-        // display content on page load
-    displayController.displaySleepyCat();
-    displayController.displayAllTodos();
 })
-
+    // inbox selector listener
 document.querySelectorAll('.inbox').forEach((node) => {
     node.addEventListener('click', (e) => {
         displayController.selectInbox(e.target)
     })
 })
+
+
 /////
 /////------------------------------------------------------
 /////
@@ -679,7 +689,7 @@ document.querySelector('.submit-task').addEventListener('click', (e) => {
     if (document.querySelector('.todo-form-title').value 
     && document.querySelector('.todo-description').value 
     && document.querySelector('.todo-due-date').value) {
-        addToDo();    
+        addTodo();    
         toggleNewTaskWindow();
     } else {
         alert('Please fill in all required fields');

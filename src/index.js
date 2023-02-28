@@ -135,8 +135,12 @@ const dayFuncs = (() => {
         return new Date().getTime();
     }
 
-    const isWithinDay = (now, day) => {
-        return ((day - now) < dayLength && (day - now) > 0);
+    const today = () => {
+        return new Date().getDate();
+    }
+
+    const isWithinDay = (today, day) => {
+        return (today == day);
     }
 
     const isWithinWeek = (now, day) => {
@@ -144,7 +148,8 @@ const dayFuncs = (() => {
     }
 
     return {
-        now,
+        now, 
+        today,
         isWithinDay,
         isWithinWeek
     }
