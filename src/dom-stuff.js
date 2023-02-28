@@ -216,25 +216,36 @@ const displayController = (() => {
             // change title depending on current inbox
         document.querySelector('.inbox-h2').textContent = target.textContent;
 
-        if (target.textContent == 'INBOX') {
-            console.log(`You are now in the main inbox`);
-            displayController.displayAllTodos();
-            return
-        }
-        if (target.textContent == 'TODAY') {
-            console.log(`You are now in Today's inbox`)
-            JSON.parse(localStorage.myTodoList).forEach((todo) => {
+        switch (target.textContent) {
+            case 'INBOX':
+                console.log(`You are now in the main inbox`);
+                displayController.displayAllTodos();
+                break;
+            case 'TODAY':
+                console.log(`You are now in Today's inbox`);
+                displayController.displayTodayTodos();
+                break;
+            case 'THIS WEEK':
+                console.log(`You are now in This Week's inbox`);
+                displayController.displayThisWeekTodos();
+                break;
+            case 'IMPORTANT':
+                console.log(`You are now in the High Priority inbox`);
+                displayController.displayImportantTodos();
+                break;
+            default:
+                console.log(`you are now in the ${target.textContent} inbox`)
+                // display project todos
+                //
+                //
+                //logic to filter todos by project
+                //
+                //
+                //
+                //
 
-                console.log(index.dayFuncs.isWithinDay(index.dayFuncs.now(), new Date(todo.dueDate).getTime()))
-            })
+                break;
         }
-        // logic to propagate inbox;
-        //
-        //
-        // goes here
-        //
-        //
-        //
     }
 
     const updateInbox = (param) => {
@@ -286,85 +297,140 @@ const displayController = (() => {
         displayController.displayAllTodos();
     }
 
-    const displayAllTodos = () => {
-        if (inboxIsEmpty() == false) {
-            const oldContainer = document.querySelector('.todos-container');
-            oldContainer.remove();
-            const container = createClassedElement('div', 'todos-container');
-            document.querySelector('.content').append(container);
-            JSON.parse(localStorage.myTodoList).forEach((todo) => {
+    const createTodo = (todo) => {
 
-                    //create todo to add to container (title, date, options)
-                const todoContainer = createClassedElement('div', 'todo');
+        //create todo to add to container (title, date, options)
+        const todoContainer = createClassedElement('div', 'todo');
 
-                    const priorityLine = createClassedElement('div', 'priority-line');
-                        switch (todo.priority) {
-                            case 'Low':
-                                priorityLine.style.backgroundColor = 'green'
-                                break;
-                            case 'Medium':
-                                priorityLine.style.backgroundColor = 'yellow'
-                                break;
-                            case 'High':
-                                priorityLine.style.backgroundColor = 'red'
-                                break
-                            default:
-                                priorityLine.style.backgroundColor = 'grey'
-                                break;
-                        }
+        const priorityLine = createClassedElement('div', 'priority-line');
+            switch (todo.priority) {
+                case 'Low':
+                    priorityLine.style.backgroundColor = 'green'
+                    break;
+                case 'Medium':
+                    priorityLine.style.backgroundColor = 'yellow'
+                    break;
+                case 'High':
+                    priorityLine.style.backgroundColor = 'red'
+                    break
+                default:
+                    priorityLine.style.backgroundColor = 'grey'
+                    break;
+            }
 
-                    const titleP = createClassedElement('p', 'todo-title');
-                        titleP.textContent = todo.title;
+        const titleP = createClassedElement('p', 'todo-title');
+            titleP.textContent = todo.title;
 
-                    const dateP = createClassedElement('p', 'todo-date');
-                        dateP.textContent = todo.dueDate;
+        const dateP = createClassedElement('p', 'todo-date');
+            dateP.textContent = todo.dueDate;
 
-                    const hiddenID = createClassedElement('p', 'hidden');
-                        hiddenID.id = 'id'
-                        hiddenID.textContent = todo.id;
+        const hiddenID = createClassedElement('p', 'hidden');
+            hiddenID.id = 'id'
+            hiddenID.textContent = todo.id;
 
-                        //options buttons
-                    const hiddenOptions = createClassedElement('div', 'hidden');
-                        hiddenOptions.id = 'hidden-options';
+            //options buttons
+        const hiddenOptions = createClassedElement('div', 'hidden');
+            hiddenOptions.id = 'hidden-options';
 
-                        const edit = createClassedElement('div', 'options-edit');
-                            edit.textContent = 'Edit';
-                          
-                        const cancel = createClassedElement('div', 'options-cancel');
-                            cancel.textContent = 'Cancel'
-                            cancel.addEventListener('click', () => {
-                                    document.querySelector('#hidden-options').classList.toggle('hidden');
-                                })
+            const edit = createClassedElement('div', 'options-edit');
+                edit.textContent = 'Edit';
+                
+            const cancel = createClassedElement('div', 'options-cancel');
+                cancel.textContent = 'Cancel'
+                cancel.addEventListener('click', () => {
+                        document.querySelector('#hidden-options').classList.toggle('hidden');
+                    })
 
-                        hiddenOptions.append(edit, cancel);
+            hiddenOptions.append(edit, cancel);
 
-                        // todo buttons
-                    const bin = new Image();
-                        bin.src = binIcon;
-                        bin.id = 'bin';
-                        bin.addEventListener('click', (e) => {
-                                // target hidden ID of todo;
-                            let x = e.target.parentElement.lastChild.textContent
-                            removeTodo(x);
-                            e.target.parentNode.remove();
-                        })
-
-                    const options = new Image();
-                        options.src = dotMenuIcon;
-                        options.id = 'options';
-                        options.addEventListener('click', (e) => {
-                            document.querySelector('#hidden-options').classList.toggle('hidden');
-                        })
-
-                    todoContainer.append(priorityLine, titleP, dateP, options, bin, hiddenOptions, hiddenID);
-                container.append(todoContainer);
+            // todo buttons
+        const bin = new Image();
+            bin.src = binIcon;
+            bin.id = 'bin';
+            bin.addEventListener('click', (e) => {
+                    // target hidden ID of todo;
+                let x = e.target.parentElement.lastChild.textContent
+                removeTodo(x);
+                e.target.parentNode.remove();
             })
-        } 
-        else {
-            displaySleepyCat();
-        }
+
+        const options = new Image();
+            options.src = dotMenuIcon;
+            options.id = 'options';
+            options.addEventListener('click', (e) => {
+                document.querySelector('#hidden-options').classList.toggle('hidden');
+            })
+
+        todoContainer.append(priorityLine, titleP, dateP, options, bin, hiddenOptions, hiddenID);
+        document.querySelector('.todos-container').append(todoContainer);
     }
 
+    const clearCurrentInbox = () => {
+        const oldContainer = document.querySelector('.todos-container');
+        oldContainer.remove();
+        const container = createClassedElement('div', 'todos-container');
+        document.querySelector('.content').append(container);
+    }
+    const displayAllTodos = () => {
+        if (inboxIsEmpty() == false) {
+            clearCurrentInbox();
+            JSON.parse(localStorage.myTodoList).forEach((todo) => {
+                createTodo(todo);
+            })
+        } 
+        else {displaySleepyCat();}
+    }
+
+    const displayTodayTodos = () => {
+        if (inboxIsEmpty() == false) {
+            clearCurrentInbox();
+            let todaysList = JSON.parse(localStorage.myTodoList).filter((todo) => {
+                if (index.dayFuncs.isWithinDay(index.dayFuncs.now(), new Date(todo.dueDate).getTime())) {
+                    return todo;
+                }
+            })
+            todaysList.forEach((todo) => {
+                createTodo(todo);
+            })
+        } else {displaySleepyCat();}
+    }
+
+    const displayThisWeekTodos = () => {
+        if (inboxIsEmpty() == false) {
+            clearCurrentInbox();
+            let ThisWeekList = JSON.parse(localStorage.myTodoList).filter((todo) => {
+                if (index.dayFuncs.isWithinWeek(index.dayFuncs.now(), new Date(todo.dueDate).getTime())) {
+                    return todo;
+                }
+            })
+            ThisWeekList.forEach((todo) => {
+                createTodo(todo);
+            })
+        } else {displaySleepyCat();}
+    }
+
+    const displayImportantTodos = () => {
+        if (inboxIsEmpty() == false) {
+            clearCurrentInbox();
+            let importantList = JSON.parse(localStorage.myTodoList).filter((todo) => {
+                if (todo.priority == 'High') return todo
+            })
+            importantList.forEach((todo) => {
+                createTodo(todo);
+            })
+        } else {displaySleepyCat();}
+    }
+
+    const displayProjectTodos = (project) => {
+        //
+        //
+        //
+        ///
+        //
+        //
+        //
+
+    }
     
 
     const clearTodoForm = () => {
@@ -379,16 +445,16 @@ const displayController = (() => {
         priority.value = '';
     }
 
-
- // manual display
-displaySleepyCat();
     return {
         fullInbox,
         selectInbox,
         displaySleepyCat,
         inboxIsEmpty,
         clearTodoForm,
-        displayAllTodos
+        displayAllTodos,
+        displayTodayTodos,
+        displayThisWeekTodos,
+        displayImportantTodos
     }
 })()
 
@@ -417,6 +483,7 @@ const addProject = () => {
     })
     if (!exists) {
         let p = createClassedElement('p', 'inbox');
+            p.classList.add('project');
             p.addEventListener('click', (e) => {
                 displayController.selectInbox(e.target);
             })
@@ -435,8 +502,18 @@ const addToDo = () => {
     let date = document.querySelector('.todo-due-date');
     let priority = document.querySelector('.priority-menu');
 
+    //
+    //
+    // logic to add project to todo
+    //
+    //
+    //
+    //
+    //
+    //
 
-    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value);
+
+    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value,);
     console.log(todo);
     index.storage.storeItem(todo);
     displayController.displaySleepyCat();
@@ -458,10 +535,6 @@ const addNotes = (id) => {
 }
 
 
-
-const removeToDo = () => {
-
-}
 
 /////
 /////-----------------------------------------------------------------------------------------
@@ -539,18 +612,33 @@ document.querySelector('.new-project-cancel').addEventListener('click', () => {
     // adds project to storage
 document.querySelector('.add-button').addEventListener('click', addProject)
 
-    // display projects on page load
-document.addEventListener('DOMContentLoaded', () => {
+const loadProjects = () => {
     if (index.storage.getProjects() !== null) {
-        JSON.parse(index.storage.getProjects()).forEach(element => {
+        JSON.parse(index.storage.getProjects()).forEach(project => {
             let p = createClassedElement('p', 'inbox');
-            p.textContent = element;
+            p.classList.add('project');
+            p.textContent = project;
             p.addEventListener('click', (e) => {
                 displayController.selectInbox(e.target);
+                // console.log(e.target)
+                //
+                //
+                //
+                //
+                //
+                //
             })
             document.querySelector('.projects').appendChild(p)
         });
     }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+        // display projects on page load
+    loadProjects();
+        // display content on page load
+    displayController.displaySleepyCat();
+    displayController.displayAllTodos();
 })
 
 document.querySelectorAll('.inbox').forEach((node) => {
