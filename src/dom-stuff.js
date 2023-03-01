@@ -258,7 +258,6 @@ const displayController = (() => {
 
     const inboxIsEmpty = () => {
         if (JSON.parse(localStorage.myTodoList).length == 0) {return true;} 
-
         else {return false;}
     }
 
@@ -283,8 +282,13 @@ const displayController = (() => {
         return currentInbox[0];
     }
 
+    const currentInboxEmpty = () => {
+        return document.querySelectorAll('.todo').length == 0
+    }
+
     const displaySleepyCat = () => {
-        const div = createClassedElement('div', 'sleepy-container');
+        if (inboxIsEmpty()) {
+            const div = createClassedElement('div', 'sleepy-container');
             const p = createClassedElement('p', 'sleepy-text');
                 p.textContent = 'You have no current tasks';
             const img = new Image();
@@ -292,9 +296,6 @@ const displayController = (() => {
                 img.classList.add('sleepy');
             div.append(img, p);
             let content = document.querySelector('.content');
-
-            // add conditional for if inbox is empty below
-        if (inboxIsEmpty()) {
             if (document.querySelector('.sleepy-container') == null) {
                 content.append(div)
             }
@@ -536,7 +537,6 @@ const displayController = (() => {
 
 
     // manual display
-    displaySleepyCat();
     document.querySelector('#inbox').classList.add('active')
     displayAllTodos();
 
