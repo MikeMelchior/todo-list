@@ -105,7 +105,7 @@ const page = () => {
         const element = createClassedElement('div', 'content');
             const currentInbox = createClassedElement('div', 'inbox-title');
                 const currentH2 = createClassedElement('h2', 'inbox-h2');
-                currentH2.textContent = `Current Inbox`
+                currentH2.textContent = `INBOX`
                 currentInbox.appendChild(currentH2);
             const todoContainer = createClassedElement('div', 'todos-container');
    
@@ -183,8 +183,28 @@ const form = () => {
     return element;
 }
 
+const projectDeletePopup = () => {
+    const element = createClassedElement('div', 'project-delete-popup');
+    element.classList.add('closed');
+        const exit = createClassedElement('div', 'project-delete-exit');
+            const x = new Image();
+            x.src = plusIcon;
+            exit.append(x)
+
+        const p = createClassedElement('p');
+            p.textContent = `Are you sure you want to delete this project and all 'to-dos' associated with it?`
+        const buttonContainer = createClassedElement('div', 'project-delete-buttons');
+            const confirm = createClassedElement('button');
+                confirm.textContent = 'confirm'
+            const cancel = createClassedElement('button');
+                cancel.textContent = 'cancel'
+            buttonContainer.append(confirm, cancel);
+        element.append(exit, p, buttonContainer)
+    return element;
+}
+
 try {
-    document.querySelector('.main').append(header(), page(), form());
+    document.querySelector('.main').append(header(), page(), form(), projectDeletePopup());
 } catch (e){
     console.log(e)
 }
@@ -353,7 +373,7 @@ const displayController = (() => {
             options.src = dotMenuIcon;
             options.id = 'options';
             options.addEventListener('click', (e) => {
-                document.querySelector('#hidden-options').classList.toggle('hidden');
+                hiddenOptions.classList.toggle('hidden');
             })
 
         todoContainer.append(priorityLine, titleP, dateP, options, bin, hiddenOptions, hiddenID);
@@ -459,7 +479,6 @@ const displayController = (() => {
         displayProjectTodos
     }
 })()
-
 
 
 
@@ -622,18 +641,12 @@ const loadProjects = () => {
     if (index.storage.getProjects() !== null) {
         JSON.parse(index.storage.getProjects()).forEach(project => {
             let p = createClassedElement('p', 'inbox');
-            p.classList.add('project');
-            p.textContent = project;
-            p.addEventListener('click', (e) => {
-                displayController.selectInbox(e.target);
-                // console.log(e.target)
-                //
-                //
-                //
-                //
-                //
-                //
-            })
+                p.classList.add('project');
+                p.textContent = project;
+                p.addEventListener('click', (e) => {
+                    console.log(e.target)
+                    displayController.selectInbox(e.target);
+                })
             document.querySelector('.projects').appendChild(p)
         });
     }
