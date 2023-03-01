@@ -150,15 +150,8 @@ export { storage, Todo, dayFuncs }
 
 /////------------------- TESTING
 
-// storage.storeItem(new Todo(storage.getID(), 'today', 'things to do today','april 10', 'low'));
-// storage.storeItem(new Todo(storage.getID(), 'tomorrow', 'do stuff', 'tomorrow', 'medium'));
 
 
+// storage.storeProject('stuff');
+// storage.deleteProject('stuff'); 
 
-
-
-
-
-// let x = new Date('Feb 28 2023 14:01:00').getTime();
-// console.log(dayFuncs.now())
-// console.log(dayFuncs.isWithinWeek(dayFuncs.now(), x));

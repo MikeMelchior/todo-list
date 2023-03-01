@@ -222,6 +222,7 @@ header {
                 display: flex;
                 align-items: center;
                 margin-bottom: 0.5rem;
+                position: relative;
             }
             div.project:hover {
                 background-color: var(--tiffanyBlue);
@@ -258,9 +259,6 @@ header {
         .inbox-title h2 {
             font-weight: 400;
         }
-        .todos-container {
-            padding-top: 20px;
-        }
 
         .todo {
             position: relative;
@@ -296,7 +294,8 @@ header {
             .todo img {
                 height: 25px;
             }
-            #hidden-options {
+            #hidden-options,
+            .project-options {
                 border-radius: 5px;
                 border: 1px solid;
                 position: absolute;
@@ -307,8 +306,8 @@ header {
                 flex-direction: column;
                 
             }
-                #hidden-options div {
-                    opacity: 1;
+                #hidden-options div,
+                .project-options div {
                     width: 80px;
                     height: 30px;
                     display: flex;
@@ -316,8 +315,13 @@ header {
                     border-radius: 5px;
                     padding: 5px;
                 }
-                    #hidden-options div:hover {
+                    #hidden-options div:hover,
+                    .project-options div:hover {
                         background-color: #eee;
+                    }
+                    .project-options {
+                        right: 15px;
+                        bottom: 20px;
                     }
 
         .sleepy-container {

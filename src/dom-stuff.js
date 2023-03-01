@@ -250,10 +250,12 @@ const displayController = (() => {
                 displayController.displayImportantTodos();
                 break;
             default:
-                console.log(`you are now in the ${target.textContent} inbox`)
-                displayController.displayProjectTodos(target.textContent);
+                document.querySelector('.inbox-h2').textContent = target.firstChild.textContent
+                console.log(`you are now in the ${target.firstChild.textContent} inbox`)
+                displayController.displayProjectTodos(target.firstChild.textContent);
                 break;
         }
+        displayController.displaySleepyCat();
     }
 
     const inboxIsEmpty = () => {
@@ -282,28 +284,34 @@ const displayController = (() => {
         return currentInbox[0];
     }
 
-    const currentInboxEmpty = () => {
-        return document.querySelectorAll('.todo').length == 0
+    const noTodos = () => {
+        return document.querySelectorAll('.todo').length == 0;
+    }
+
+    const sleepyCat = () => {
+        const div = createClassedElement('div', 'sleepy-container');
+        const p = createClassedElement('p', 'sleepy-text');
+            p.textContent = 'You have no current tasks';
+        const img = new Image();
+            img.src = catIcon;
+            img.classList.add('sleepy');
+        div.append(img, p);
+        return div
     }
 
     const displaySleepyCat = () => {
-        if (inboxIsEmpty()) {
-            const div = createClassedElement('div', 'sleepy-container');
-            const p = createClassedElement('p', 'sleepy-text');
-                p.textContent = 'You have no current tasks';
-            const img = new Image();
-                img.src = catIcon;
-                img.classList.add('sleepy');
-            div.append(img, p);
-            let content = document.querySelector('.content');
+        let content = document.querySelector('.content');
+        if (noTodos()) {
             if (document.querySelector('.sleepy-container') == null) {
-                content.append(div)
+                content.append(sleepyCat())
             }
         } else {
             if (document.querySelector('.sleepy-container') != null)
             document.querySelector('.sleepy-container').remove();
         }
     }
+
+
 
     const removeTodo = (id) => {
         let currentList = JSON.parse(localStorage.myTodoList);
@@ -314,6 +322,12 @@ const displayController = (() => {
         })
         localStorage.setItem('myTodoList', JSON.stringify(newList));
         displayController.selectInbox(displayController.getActiveInbox());
+    }
+
+    const hideOptionsMenus = () => {
+        document.querySelectorAll('#hidden-options').forEach(node => {
+            node.classList.add('hidden')
+        })
     }
 
     const createTodo = (todo) => {
@@ -357,7 +371,7 @@ const displayController = (() => {
             const cancel = createClassedElement('div', 'options-cancel');
                 cancel.textContent = 'Cancel'
                 cancel.addEventListener('click', () => {
-                        document.querySelector('#hidden-options').classList.toggle('hidden');
+                        hideOptionsMenus();
                     })
 
             hiddenOptions.append(edit, cancel);
@@ -377,6 +391,7 @@ const displayController = (() => {
             options.src = dotMenuIcon;
             options.id = 'options';
             options.addEventListener('click', (e) => {
+                hideOptionsMenus();
                 hiddenOptions.classList.toggle('hidden');
             })
 
@@ -396,8 +411,7 @@ const displayController = (() => {
             JSON.parse(localStorage.myTodoList).forEach((todo) => {
                 createTodo(todo);
             })
-        } 
-        else {displaySleepyCat();}
+        }
     }
 
     const displayTodayTodos = () => {
@@ -414,7 +428,7 @@ const displayController = (() => {
             todaysList.forEach((todo) => {
                 createTodo(todo);
             })
-        } else {displaySleepyCat();}
+        }
     }
 
     const displayThisWeekTodos = () => {
@@ -428,7 +442,7 @@ const displayController = (() => {
             ThisWeekList.forEach((todo) => {
                 createTodo(todo);
             })
-        } else {displaySleepyCat();}
+        }
     }
 
     const displayImportantTodos = () => {
@@ -440,7 +454,7 @@ const displayController = (() => {
             importantList.forEach((todo) => {
                 createTodo(todo);
             })
-        } else {displaySleepyCat();}
+        }
     }
 
     const displayProjectTodos = (project) => {
@@ -453,7 +467,7 @@ const displayController = (() => {
             projectList.forEach((todo) => {
                 createTodo(todo);
             })
-        } else {displaySleepyCat();}
+        }
     }
     
     const clearTodoForm = () => {
@@ -493,11 +507,17 @@ const displayController = (() => {
             div.classList.add('project');
             div.addEventListener('click', (e) => {
                 displayController.selectInbox(e.target.parentElement);
-                console.log(e.target)
             })
                 let p = createClassedElement('p');
                 p.textContent = projectName;
-                div.append(p)
+                
+                let img = new Image();
+                    img.src = dotMenuIcon;
+                    img.id = 'project-menu';
+                    img.classList.add('test')
+
+                div.append(p, img);
+                    
             document.querySelector('.projects').appendChild(div);
             index.storage.storeProject(projectName);
             
@@ -505,6 +525,10 @@ const displayController = (() => {
             clearNewProjectForm();
         };
     };
+
+    const removeProject = (project) => {
+        index.storage.removeProject(project);
+    }
 
     const addTodo = () => {
         // variables to acquire form input values 
@@ -529,9 +553,6 @@ const displayController = (() => {
             // store todo in local storage
         index.storage.storeItem(todo);
 
-            // check if empty inbox image needs to be removed
-        displayController.displaySleepyCat();
-
         displayController.clearTodoForm();
     }
 
@@ -552,7 +573,8 @@ const displayController = (() => {
         displayProjectTodos,
         getActiveInbox,
         addProject,
-        addTodo
+        addTodo,
+        hideOptionsMenus
     }
 })()
 
@@ -660,16 +682,52 @@ const loadProjects = () => {
             div.classList.add('project');
             div.addEventListener('click', (e) => {
                 displayController.selectInbox(e.target.parentElement);
-                console.log(e.target.parentElement.textContent)
             })
-                let p = createClassedElement('p');
+                const p = createClassedElement('p');
                 p.textContent = project;
 
-                let img = new Image();
+                const img = new Image();
                     img.src = dotMenuIcon;
                     img.id = 'project-menu'
+                    img.classList.add(`${project.split(' ').join('-')}`);
+                
+                const hiddenMenu = createClassedElement('div', 'project-options');
+                    hiddenMenu.classList.add('hidden');
+                    const deleteButton = createClassedElement('div', 'project-menu-delete');
+                        deleteButton.textContent = 'delete';
+                    const cancelButton = createClassedElement('div', 'project-menu-cancel')
+                        cancelButton.textContent = 'cancel'
+                        cancelButton.addEventListener('click', () => {
+                            document.querySelectorAll('.project-options').forEach(node => {
+                                node.classList.add('hidden');
+                                node.classList.remove('active')
+                            })
+                        })
 
-                div.append(p, img)
+                    hiddenMenu.append(deleteButton, cancelButton)
+
+                    img.addEventListener('click', (e) => {
+                        document.querySelectorAll('.project-options').forEach(node => {
+                            node.classList.add('hidden');
+                            node.classList.remove('active');
+                        })
+                        hiddenMenu.classList.toggle('hidden')
+
+                        // make list of todos that match project to be deleted with project;
+
+                        let projectID = e.target.classList.value.split('-').join(' ');
+                        let projectList = []
+                        JSON.parse(localStorage.myTodoList).filter((todo) => {
+                            if (todo.project == projectID) {
+                                projectList.push(todo.id)
+                                return todo.id;
+                            }
+                        })
+                        console.log(projectList)
+
+                    })
+
+                div.append(p, img, hiddenMenu)
 
                 
             document.querySelector('.projects').appendChild(div);
@@ -687,6 +745,7 @@ document.querySelector('.project-form').addEventListener('keypress', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
         // display projects on page load
     loadProjects();
+    displayController.displaySleepyCat();
 })
     // inbox selector listener
 document.querySelectorAll('.inbox').forEach((node) => {
@@ -729,7 +788,7 @@ document.querySelector('.submit-task').addEventListener('click', (e) => {
     if (document.querySelector('.todo-form-title').value 
     && document.querySelector('.todo-description').value 
     && document.querySelector('.todo-due-date').value) {
-        displayController.addTodo();    
+        displayController.addTodo();   
         toggleNewTaskWindow();
         
         let inbox = displayController.getActiveInbox();
@@ -737,8 +796,9 @@ document.querySelector('.submit-task').addEventListener('click', (e) => {
     } else {
         alert('Please fill in all required fields');
     }
-    
 })
+
+
 
 
 
