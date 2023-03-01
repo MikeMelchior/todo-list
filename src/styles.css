@@ -218,13 +218,22 @@ header {
             .projects .inbox {
                 margin-left: 1rem;
             }
-            .project {
+            div.project {
                 display: flex;
-                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.5rem;
             }
-            #project-delete-button {
-                height: 20px;
-                opacity: 0.6;
+            div.project:hover {
+                background-color: var(--tiffanyBlue);
+            }
+            div.project p {
+                flex: auto;
+                margin-bottom: 0;
+            }
+            #project-menu {
+                height: 41px;
+                padding: 10px 0;
+                width: 20px;
             }
             
     .content {

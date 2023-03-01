@@ -131,26 +131,11 @@ const dayFuncs = (() => {
     const dayLength = 1000*60*60*24;
     const weekLength = dayLength * 7;
 
-    const now = () => {
-        return new Date().getTime();
-    }
-
-    const today = () => {
-        return new Date().getDate();
-    }
-
-    const isWithinDay = (today, day) => {
-        return (today == day);
-    }
-
     const isWithinWeek = (now, day) => {
         return ((day - now) < weekLength);
     }
 
     return {
-        now, 
-        today,
-        isWithinDay,
         isWithinWeek
     }
 })()

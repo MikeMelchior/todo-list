@@ -48,6 +48,7 @@ const page = () => {
                     const h2 = createClassedElement('h2');
                         h2.textContent = "HOME";
                     const inbox = createClassedElement('p', 'inbox');
+                        inbox.id = 'inbox';
                         inbox.textContent = "INBOX";
                     const today = createClassedElement('p', 'inbox');
                         today.textContent = "TODAY";
@@ -65,6 +66,8 @@ const page = () => {
                 const element = createClassedElement('div', 'projects');
                     const h2 = createClassedElement('h2');
                         h2.textContent = "PROJECTS";
+
+                        //new project form
                     const form = createClassedElement('form', 'project-form');
                         form.classList.add('hidden')
                         const nameLabel = createClassedElement('label');
@@ -84,6 +87,7 @@ const page = () => {
                                 cancelButton.type = 'button'
                             buttonsDiv.append(addButton, cancelButton)
                         form.append(nameLabel, nameInput, buttonsDiv)
+
                     const newProject = createClassedElement('div', 'new-project');
                         const p = createClassedElement('p');
                             p.textContent = 'ADD NEW PROJECT';
@@ -91,7 +95,7 @@ const page = () => {
                             plus.src = plusIcon;
                             plus.id = 'plus'
                         newProject.append(p, plus);
-                    // add new project + 
+                    
                     element.append(h2, newProject, form)
                 return element;
             }
@@ -217,15 +221,7 @@ try {
 
 
 const displayController = (() => {
-    let activeInbox;
 
-
-    const fullInbox = () => {
-        // get array of todos
-        let x = JSON.parse(localStorage.myTodoList);
-        console.log(x);
-    }
-    
         // logic for selecting inbox and propagating with appropriate todos
     const selectInbox = (target) => {
         document.querySelectorAll('.inbox').forEach((target) => {
@@ -261,22 +257,30 @@ const displayController = (() => {
     }
 
     const inboxIsEmpty = () => {
-        if (JSON.parse(localStorage.myTodoList).length == 0) {
-            return true 
-        } 
-        else {
-            return false
-        }
+        if (JSON.parse(localStorage.myTodoList).length == 0) {return true;} 
+
+        else {return false;}
     }
 
+
     const getActiveProject = () => {
-        let projectList = [...document.querySelectorAll('.project')]
+        let projectList = [...document.querySelectorAll('.project')];
         let currentProject = projectList.filter(project => {
             if ([...project.classList].indexOf('active') != -1) {
                 return project;
             }
         })
         return currentProject[0].textContent;
+    }
+
+    const getActiveInbox = () => {
+        let inboxList = [...document.querySelectorAll('.inbox')];
+        let currentInbox = inboxList.filter(inbox => {
+            if([...inbox.classList].indexOf('active') != -1) {
+                return inbox;
+            }
+        })
+        return currentInbox[0];
     }
 
     const displaySleepyCat = () => {
@@ -307,9 +311,8 @@ const displayController = (() => {
                 return todo
             }
         })
-
         localStorage.setItem('myTodoList', JSON.stringify(newList));
-        displayController.displayAllTodos();
+        displayController.selectInbox(displayController.getActiveInbox());
     }
 
     const createTodo = (todo) => {
@@ -400,7 +403,10 @@ const displayController = (() => {
         if (inboxIsEmpty() == false) {
             clearCurrentInbox();
             let todaysList = JSON.parse(localStorage.myTodoList).filter((todo) => {
-                if (index.dayFuncs.isWithinDay(index.dayFuncs.today(), todo.dueDate.split('-')[2])) {
+                let dayList = todo.dueDate.split('-');
+                if (new Date().getDate() == dayList[2]
+                        && new Date().getMonth() == parseInt(dayList[1]) - 1
+                        && new Date().getFullYear() == dayList[0]) {
                     return todo;
                 }
             })
@@ -414,7 +420,7 @@ const displayController = (() => {
         if (inboxIsEmpty() == false) {
             clearCurrentInbox();
             let ThisWeekList = JSON.parse(localStorage.myTodoList).filter((todo) => {
-                if (index.dayFuncs.isWithinWeek(index.dayFuncs.now(), new Date(todo.dueDate).getTime())) {
+                if (index.dayFuncs.isWithinWeek(new Date().getTime(), new Date(todo.dueDate).getTime())) {
                     return todo;
                 }
             })
@@ -446,10 +452,9 @@ const displayController = (() => {
             projectList.forEach((todo) => {
                 createTodo(todo);
             })
-        }
+        } else {displaySleepyCat();}
     }
     
-
     const clearTodoForm = () => {
         let title = document.querySelector('.todo-form-title');
         let description = document.querySelector('.todo-description');
@@ -462,12 +467,80 @@ const displayController = (() => {
         priority.value = '';
     }
 
+    const addProject = () => {
+        let exists;
+        let projectName = document.querySelector('#new-project-name').value;
+        if (projectName.length < 3) {
+            console.log(`project name is ${projectName.length} chars long`)
+            alert('Project name must be between 3 and 18 characters');
+            return;
+        }
+        if (projectName.length > 18) {
+            alert('Project name must be between 3 and 18 characters');
+            return;
+        }
+        let projects = document.querySelector('.projects');
+        // check if project already exists
+        projects.childNodes.forEach(node => {
+            if (node.textContent == projectName) {
+                alert('Project already exists');
+                exists = true;
+            };
+        })
+        if (!exists) {
+            let div = createClassedElement('div', 'inbox');
+            div.classList.add('project');
+            div.addEventListener('click', (e) => {
+                displayController.selectInbox(e.target.parentElement);
+                console.log(e.target)
+            })
+                let p = createClassedElement('p');
+                p.textContent = projectName;
+                div.append(p)
+            document.querySelector('.projects').appendChild(div);
+            index.storage.storeProject(projectName);
+            
+            toggleNewProjectForm();
+            clearNewProjectForm();
+        };
+    };
+
+    const addTodo = () => {
+        // variables to acquire form input values 
+        let title = document.querySelector('.todo-form-title');
+        let description = document.querySelector('.todo-description');
+        let date = document.querySelector('.todo-due-date');
+        let priority = document.querySelector('.priority-menu');
+
+            // sets current project key and gives value if a project is selected
+        let currentProject;
+        let projects = [...document.querySelectorAll('.project')]
+
+        projects.forEach(project => {
+            let list = [...project.classList];
+            if (list.indexOf('active') != -1) {
+                currentProject = project.textContent;
+            }
+        })
+
+        let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value, currentProject);
+        console.log(todo);
+            // store todo in local storage
+        index.storage.storeItem(todo);
+
+            // check if empty inbox image needs to be removed
+        displayController.displaySleepyCat();
+
+        displayController.clearTodoForm();
+    }
+
+
     // manual display
     displaySleepyCat();
+    document.querySelector('#inbox').classList.add('active')
     displayAllTodos();
 
     return {
-        fullInbox,
         selectInbox,
         displaySleepyCat,
         inboxIsEmpty,
@@ -476,75 +549,18 @@ const displayController = (() => {
         displayTodayTodos,
         displayThisWeekTodos,
         displayImportantTodos,
-        displayProjectTodos
+        displayProjectTodos,
+        getActiveInbox,
+        addProject,
+        addTodo
     }
 })()
 
 
 
-const addProject = () => {
-    let exists;
-    let projectName = document.querySelector('#new-project-name').value;
-    if (projectName.length < 3) {
-        console.log(`project name is ${projectName.length} chars long`)
-        alert('Project name must be between 3 and 18 characters');
-        return;
-    }
-    if (projectName.length > 18) {
-        alert('Project name must be between 3 and 18 characters');
-        return;
-    }
-    let projects = document.querySelector('.projects');
-      // check if project already exists
-    projects.childNodes.forEach(node => {
-        if (node.textContent == projectName) {
-            alert('Project already exists');
-            exists = true;
-        };
-    })
-    if (!exists) {
-        let p = createClassedElement('p', 'inbox');
-            p.classList.add('project');
-            p.addEventListener('click', (e) => {
-                displayController.selectInbox(e.target);
-            })
 
-        p.textContent = projectName;
-        document.querySelector('.projects').appendChild(p);
-        index.storage.storeProject(projectName);
-        toggleNewProjectForm();
-        clearNewProjectForm();
-    };
-};
 
-const addTodo = () => {
-        // variables to acquire form input values 
-    let title = document.querySelector('.todo-form-title');
-    let description = document.querySelector('.todo-description');
-    let date = document.querySelector('.todo-due-date');
-    let priority = document.querySelector('.priority-menu');
 
-        // sets current project key and gives value if a project is selected
-    let currentProject;
-    let projects = [...document.querySelectorAll('.project')]
-
-    projects.forEach(project => {
-        let list = [...project.classList];
-        if (list.indexOf('active') != -1) {
-            currentProject = project.textContent;
-        }
-    })
-
-    let todo = new index.Todo(localStorage.id, title.value, description.value, date.value, priority.value, currentProject);
-    console.log(todo);
-        // store todo in local storage
-    index.storage.storeItem(todo);
-
-        // check if empty inbox image needs to be removed
-    displayController.displaySleepyCat();
-
-    displayController.clearTodoForm();
-}
 
 const addNotes = (id) => {
         //grab todo from storage
@@ -635,26 +651,37 @@ document.querySelector('.new-project-cancel').addEventListener('click', () => {
     clearNewProjectForm();
 });
     // adds project to storage
-document.querySelector('.add-button').addEventListener('click', addProject)
+document.querySelector('.add-button').addEventListener('click', displayController.addProject)
 
 const loadProjects = () => {
     if (index.storage.getProjects() !== null) {
         JSON.parse(index.storage.getProjects()).forEach(project => {
-            let p = createClassedElement('p', 'inbox');
-                p.classList.add('project');
+            let div = createClassedElement('div', 'inbox');
+            div.classList.add('project');
+            div.addEventListener('click', (e) => {
+                displayController.selectInbox(e.target.parentElement);
+                console.log(e.target.parentElement.textContent)
+            })
+                let p = createClassedElement('p');
                 p.textContent = project;
-                p.addEventListener('click', (e) => {
-                    console.log(e.target)
-                    displayController.selectInbox(e.target);
-                })
-            document.querySelector('.projects').appendChild(p)
+
+                let img = new Image();
+                    img.src = dotMenuIcon;
+                    img.id = 'project-menu'
+
+                div.append(p, img)
+
+                
+            document.querySelector('.projects').appendChild(div);
         });
     }
 }
 
-    // prevent default of project form
-document.querySelector('.project-form').addEventListener('keypress', () => {
-    event.preventDefault();
+    // prevent default of project form on enter press
+document.querySelector('.project-form').addEventListener('keypress', (e) => {
+    if (e.keyCode == 13) {
+        event.preventDefault();
+    }
 })
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -702,8 +729,11 @@ document.querySelector('.submit-task').addEventListener('click', (e) => {
     if (document.querySelector('.todo-form-title').value 
     && document.querySelector('.todo-description').value 
     && document.querySelector('.todo-due-date').value) {
-        addTodo();    
+        displayController.addTodo();    
         toggleNewTaskWindow();
+        
+        let inbox = displayController.getActiveInbox();
+        displayController.selectInbox(inbox);
     } else {
         alert('Please fill in all required fields');
     }
