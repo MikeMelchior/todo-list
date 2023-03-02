@@ -216,25 +216,18 @@ header {
                 }
                 
             .projects .inbox {
-                margin-left: 1rem;
-            }
-            div.project {
-                display: flex;
-                align-items: center;
+                margin-left: 2rem;
                 margin-bottom: 0.5rem;
-                position: relative;
+                height: 40px;
+                display: grid;
+                place-self: center;
             }
-            div.project:hover {
+            .project:hover {
                 background-color: var(--tiffanyBlue);
             }
-            div.project p {
+            .project p {
                 flex: auto;
                 margin-bottom: 0;
-            }
-            #project-menu {
-                height: 41px;
-                padding: 10px 0;
-                width: 20px;
             }
             
     .content {
@@ -267,7 +260,6 @@ header {
             background-color: var(--tiffanyBlue);
             width: 90%;
             margin: 1rem auto;
-            padding: 5px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -282,7 +274,7 @@ header {
             }
             .todo-title {
                 flex: auto;
-                padding-left: 15px;
+                padding: 5px 5px 5px 15px;
                 font-size: 18px;
             }
             .todo:hover {
@@ -294,8 +286,7 @@ header {
             .todo img {
                 height: 25px;
             }
-            #hidden-options,
-            .project-options {
+            #hidden-options{
                 border-radius: 5px;
                 border: 1px solid;
                 position: absolute;
@@ -306,8 +297,7 @@ header {
                 flex-direction: column;
                 
             }
-                #hidden-options div,
-                .project-options div {
+                #hidden-options div{
                     width: 80px;
                     height: 30px;
                     display: flex;
@@ -315,13 +305,8 @@ header {
                     border-radius: 5px;
                     padding: 5px;
                 }
-                    #hidden-options div:hover,
-                    .project-options div:hover {
+                    #hidden-options div:hover{
                         background-color: #eee;
-                    }
-                    .project-options {
-                        right: 15px;
-                        bottom: 20px;
                     }
 
         .sleepy-container {
@@ -510,6 +495,37 @@ footer {
             background-color: #94d1bec5;
         }
 
+.summary {
+    position: absolute;
+    width: 600px;
+    max-width: 85vw;
+    height: 400px;
+    max-height: 70vh;
+    background-color: var(--white);
+    border: 2px solid var(--ashGray);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 3rem;
+    margin: auto;
+    font-size: 20px;
+    display: grid;
+    align-items: center;
+    font-family: Quicksand;
+}
+    .summary-exit {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        height: 20px;
+        transform: rotate(45deg);
+        cursor: pointer;
+    }
+    
+
+
+
 .closed {
     pointer-events: none;
 }
@@ -523,12 +539,16 @@ a:hover {
 }
 
 .hidden {
-    position: absolute;
     opacity: 0;
-    visibility: 0;
+    visibility: none;
     pointer-events: none;
 }
 
 .active {
     background-color: var(--tiffanyBlue);
+}
+ 
+.no-pointer-events {
+    pointer-events: none;
+    opacity: 0.6;
 }

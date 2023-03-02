@@ -250,9 +250,9 @@ const displayController = (() => {
                 displayController.displayImportantTodos();
                 break;
             default:
-                document.querySelector('.inbox-h2').textContent = target.firstChild.textContent
-                console.log(`you are now in the ${target.firstChild.textContent} inbox`)
-                displayController.displayProjectTodos(target.firstChild.textContent);
+                document.querySelector('.inbox-h2').textContent = target.textContent
+                console.log(`you are now in the ${target.textContent} inbox`)
+                displayController.displayProjectTodos(target.textContent);
                 break;
         }
         displayController.displaySleepyCat();
@@ -354,6 +354,43 @@ const displayController = (() => {
         const titleP = createClassedElement('p', 'todo-title');
             titleP.textContent = todo.title;
 
+                // event listener to create summary window on click
+            titleP.addEventListener('click', (e) => {
+                let todolist = JSON.parse(localStorage.myTodoList);
+                todolist.filter(todo => {
+                    if (todo.id == e.target.parentElement.lastChild.textContent) {
+                        console.log(todo)
+                        const summaryWindow = createClassedElement('div', 'summary');
+                            const exitButton = new Image();
+                                exitButton.src = plusIcon;
+                                exitButton.classList.add('summary-exit');
+                                exitButton.addEventListener('click', () => {
+                                    document.querySelector('.summary').remove();
+                                    displayController.togglePageClickEvents();
+                                })
+                            const titleP = createClassedElement('p');
+                                titleP.innerHTML = `<strong>Title:</strong> ${todo.title}`;
+                            const descriptionP = createClassedElement('p');
+                                descriptionP.innerHTML = `<strong>Description:</strong> ${todo.description}`;
+                            const projectP = createClassedElement('p');
+                                let project;
+                                if (todo.project != undefined) {
+                                    project = todo.project;
+                                } else {
+                                    project = 'none';
+                                }
+                                projectP.innerHTML = `<strong>Project:</strong> ${project}`;
+                            const dueDate = createClassedElement('p');
+                                dueDate.innerHTML = `<strong>Due Date:</strong> ${todo.dueDate}`;
+                            const priority = createClassedElement('p');
+                                priority.innerHTML = `<strong>Priority:</strong> ${todo.priority}`;
+                        summaryWindow.append(exitButton, titleP, descriptionP, projectP, dueDate, priority)
+                        document.querySelector('.main').append(summaryWindow)
+                        displayController.togglePageClickEvents();
+                    }
+                })
+            })
+
         const dateP = createClassedElement('p', 'todo-date');
             dateP.textContent = todo.dueDate;
 
@@ -367,6 +404,9 @@ const displayController = (() => {
 
             const edit = createClassedElement('div', 'options-edit');
                 edit.textContent = 'Edit';
+                edit.addEventListener('click', () => {
+                    alert('coming soon')
+                })
                 
             const cancel = createClassedElement('div', 'options-cancel');
                 cancel.textContent = 'Cancel'
@@ -385,6 +425,7 @@ const displayController = (() => {
                 let x = e.target.parentElement.lastChild.textContent
                 removeTodo(x);
                 e.target.parentNode.remove();
+                displaySleepyCat();
             })
 
         const options = new Image();
@@ -392,7 +433,10 @@ const displayController = (() => {
             options.id = 'options';
             options.addEventListener('click', (e) => {
                 hideOptionsMenus();
-                hiddenOptions.classList.toggle('hidden');
+                setTimeout(() => {
+                    hiddenOptions.classList.toggle('hidden');
+                }, 1);
+                
             })
 
         todoContainer.append(priorityLine, titleP, dateP, options, bin, hiddenOptions, hiddenID);
@@ -503,24 +547,14 @@ const displayController = (() => {
             };
         })
         if (!exists) {
-            let div = createClassedElement('div', 'inbox');
-            div.classList.add('project');
-            div.addEventListener('click', (e) => {
-                displayController.selectInbox(e.target.parentElement);
-            })
-                let p = createClassedElement('p');
+            const p = createClassedElement('p', 'inbox');
+                p.classList.add('project');
                 p.textContent = projectName;
-                
-                let img = new Image();
-                    img.src = dotMenuIcon;
-                    img.id = 'project-menu';
-                    img.classList.add('test')
-
-                div.append(p, img);
-                    
-            document.querySelector('.projects').appendChild(div);
+                p.addEventListener('click', (e) => {
+                    displayController.selectInbox(e.target)
+                })
+            document.querySelector('.projects').appendChild(p);
             index.storage.storeProject(projectName);
-            
             toggleNewProjectForm();
             clearNewProjectForm();
         };
@@ -540,7 +574,6 @@ const displayController = (() => {
             // sets current project key and gives value if a project is selected
         let currentProject;
         let projects = [...document.querySelectorAll('.project')]
-
         projects.forEach(project => {
             let list = [...project.classList];
             if (list.indexOf('active') != -1) {
@@ -556,6 +589,9 @@ const displayController = (() => {
         displayController.clearTodoForm();
     }
 
+    const togglePageClickEvents = () => {
+        document.querySelector('.page').classList.toggle('no-pointer-events');
+    }
 
     // manual display
     document.querySelector('#inbox').classList.add('active')
@@ -574,10 +610,10 @@ const displayController = (() => {
         getActiveInbox,
         addProject,
         addTodo,
-        hideOptionsMenus
+        hideOptionsMenus,
+        togglePageClickEvents
     }
 })()
-
 
 
 
@@ -678,59 +714,13 @@ document.querySelector('.add-button').addEventListener('click', displayControlle
 const loadProjects = () => {
     if (index.storage.getProjects() !== null) {
         JSON.parse(index.storage.getProjects()).forEach(project => {
-            let div = createClassedElement('div', 'inbox');
-            div.classList.add('project');
-            div.addEventListener('click', (e) => {
-                displayController.selectInbox(e.target.parentElement);
-            })
-                const p = createClassedElement('p');
+            const p = createClassedElement('p', 'inbox');
+                p.classList.add('project');
                 p.textContent = project;
-
-                const img = new Image();
-                    img.src = dotMenuIcon;
-                    img.id = 'project-menu'
-                    img.classList.add(`${project.split(' ').join('-')}`);
-                
-                const hiddenMenu = createClassedElement('div', 'project-options');
-                    hiddenMenu.classList.add('hidden');
-                    const deleteButton = createClassedElement('div', 'project-menu-delete');
-                        deleteButton.textContent = 'delete';
-                    const cancelButton = createClassedElement('div', 'project-menu-cancel')
-                        cancelButton.textContent = 'cancel'
-                        cancelButton.addEventListener('click', () => {
-                            document.querySelectorAll('.project-options').forEach(node => {
-                                node.classList.add('hidden');
-                                node.classList.remove('active')
-                            })
-                        })
-
-                    hiddenMenu.append(deleteButton, cancelButton)
-
-                    img.addEventListener('click', (e) => {
-                        document.querySelectorAll('.project-options').forEach(node => {
-                            node.classList.add('hidden');
-                            node.classList.remove('active');
-                        })
-                        hiddenMenu.classList.toggle('hidden')
-
-                        // make list of todos that match project to be deleted with project;
-
-                        let projectID = e.target.classList.value.split('-').join(' ');
-                        let projectList = []
-                        JSON.parse(localStorage.myTodoList).filter((todo) => {
-                            if (todo.project == projectID) {
-                                projectList.push(todo.id)
-                                return todo.id;
-                            }
-                        })
-                        console.log(projectList)
-
-                    })
-
-                div.append(p, img, hiddenMenu)
-
-                
-            document.querySelector('.projects').appendChild(div);
+                p.addEventListener('click', (e) => {
+                    displayController.selectInbox(e.target)
+                })
+            document.querySelector('.projects').appendChild(p);
         });
     }
 }
@@ -773,12 +763,14 @@ const toggleNewTaskWindow = () => {
     // open new task window on "add task" button click
 document.querySelector('.add-task-button').addEventListener('click', () => {
     toggleNewTaskWindow();
+    displayController.togglePageClickEvents();
 })
 
     // close new task window and clear form with exit button
 document.querySelector('.task-form-exit').addEventListener('click', () => {
     displayController.clearTodoForm();
     toggleNewTaskWindow();
+    displayController.togglePageClickEvents();
 })
 
     // add to do and close new task window
@@ -790,13 +782,25 @@ document.querySelector('.submit-task').addEventListener('click', (e) => {
     && document.querySelector('.todo-due-date').value) {
         displayController.addTodo();   
         toggleNewTaskWindow();
-        
         let inbox = displayController.getActiveInbox();
         displayController.selectInbox(inbox);
+        displayController.togglePageClickEvents();
     } else {
         alert('Please fill in all required fields');
     }
 })
+
+//-------------------------------------------------------------------------
+
+
+document.querySelector('.page').addEventListener('click', () => {
+    document.querySelectorAll('#hidden-options').forEach(node => {
+        if (node.classList.value != 'hidden') {
+            displayController.hideOptionsMenus();
+        }
+    })
+})
+
 
 
 
