@@ -413,6 +413,11 @@ footer {
         }
         .todo-due-date {
             height: 50px;
+            display: flex;
+        }
+        .todo-due-date::before {
+            content: 'Due Date:';
+            flex: 1;
         }
 
         .task-form textarea:focus,
