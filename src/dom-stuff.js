@@ -801,7 +801,7 @@ document.querySelector('.page').addEventListener('click', () => {
     })
 })
 
-
+document.querySelector('.sidebar').classList.add('closed')
 
 
 
