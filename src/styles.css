@@ -434,6 +434,7 @@ footer {
             align-self: end;
             cursor: pointer;
             color: var(--black);
+            font-family: Quicksand;
         }
             .submit-task:hover {
                 background-color: #94d1bec5;
