@@ -169,8 +169,10 @@ const form = () => {
                 const dueDateInput = createClassedElement('input', 'todo-due-date');
                     dueDateInput.type = 'text';
                     dueDateInput.required = true;
+                    dueDateInput.readonly = true;
                     dueDateInput.placeholder = 'Due Date';
                     dueDateInput.onfocus = () => {
+                        event.preventDefault();
                         dueDateInput.type = 'date'
                     }
                 const priority = createClassedElement('select', 'priority-menu');
