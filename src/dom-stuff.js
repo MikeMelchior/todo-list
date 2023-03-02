@@ -167,14 +167,8 @@ const form = () => {
 
             const container = createClassedElement('div', 'due-date-prio-container');
                 const dueDateInput = createClassedElement('input', 'todo-due-date');
-                    dueDateInput.type = 'text';
+                    dueDateInput.type = 'date';
                     dueDateInput.required = true;
-                    dueDateInput.readOnly = true;
-                    dueDateInput.placeholder = 'Due Date';
-                    dueDateInput.onfocus = () => {
-                        dueDateInput.readOnly = false;
-                        dueDateInput.type = 'date';
-                    }
                 const priority = createClassedElement('select', 'priority-menu');
                     priority.innerHTML = `<option value="" disabled selected>Priority (optional)</option>
                                         <option value="Low">Low</option>
