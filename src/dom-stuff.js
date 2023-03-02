@@ -664,7 +664,7 @@ const fullscreenMenu = (x) => {
 };
 
 
-let hideMenu = window.matchMedia("(max-width: 400px)");
+let hideMenu = window.matchMedia("(max-width: 350px)");
 menuHider(hideMenu);
 hideMenu.addEventListener('change', menuHider);
 
